@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>RoleService.Cmd.Infrastructure</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\CQRS.Core\CQRS.Core.csproj" />
+    <ProjectReference Include="..\RoleService.Cmd.Domain\UserRoleService.Cmd.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
+

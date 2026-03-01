@@ -1,0 +1,331 @@
+{
+  "Routes": [
+    // SignUp
+    {
+      "DownstreamPathTemplate": "/api/v1/SignUp_Query/UserInfo",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_signup_query",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/SignUp/UserInfo",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/SignUp_Query/AllUser",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_signup_query",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/SignUp/AllUser",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/SignUp_Cmd/SignUp",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_signup_cmd",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/SignUp/SignUp",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/SignUp_Cmd/Validate",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_signup_cmd",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/SignUp/Validate",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/SignUp_Cmd/ForgetPassword",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_signup_cmd",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/SignUp/ForgetPassword",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/SignUp_Cmd/AccountDisable",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_signup_cmd",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/SignUp/AccountDisable",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/SignUp_Cmd/AccountDelete",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_signup_cmd",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/SignUp/AccountDelete",
+      "UpstreamHttpMethod": [ "Delete" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/SignUp_Cmd/Password",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_signup_cmd",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/SignUp/Password",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/SignUp_Cmd/UserInfo",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_signup_cmd",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/SignUp/UserInfo",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
+
+    // LogIn
+    {
+      "DownstreamPathTemplate": "/api/v1/LogIn_Cmd/LogIn",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_login_cmd",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/LogIn/Login",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/LogIn_Cmd/GoogleLogIn",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_login_cmd",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/LogIn/GoogleLogIn",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/LogIn_Cmd/LogOut",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_login_cmd",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/LogIn/LogOut",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/LogIn_Cmd/EnableNotification",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_login_cmd",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/LogIn/EnableNotification",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
+
+    // UserRole
+    {
+      "DownstreamPathTemplate": "/api/v1/UserRole_Query/UserRoleInStore",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_role_query",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/UserRole/UserRoleInStore",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/UserRole_Query/Roles",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_role_query",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/UserRole/Roles",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/UserRole_Cmd/Add",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_role_cmd",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/UserRole/Add",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/UserRole_Cmd/Update",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_role_cmd",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/UserRole/Update",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/UserRole_Cmd/Disable",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_role_cmd",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/UserRole/Disable",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
+
+    // UserRolePermission
+    {
+      "DownstreamPathTemplate": "/api/v1/UserRolePermission_Query/Permissions",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_rolepermission_query",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/UserRolePermission/Permissions",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/UserRolePermission_Cmd/Update",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_rolepermission_cmd",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/UserRolePermission/Update",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
+
+    // Controller
+    {
+      "DownstreamPathTemplate": "/api/v1/Controller_Query/Controllers",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_controller_query",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/Controller/Controllers",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Controller_Query/Controller",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_controller_query",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/Controller/Controller",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Controller_Cmd/Add",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_controller_cmd",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/Controller/Add",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Controller_Cmd/Update",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_controller_cmd",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/Controller/Update",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/Controller_Cmd/Disable",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_controller_cmd",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/Controller/Disable",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
+
+
+    //管理者後臺用
+    {
+      "DownstreamPathTemplate": "/api/v1/LogIn_Cmd/AdminLogIn",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "egmapi_login_cmd",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/LogIn/AdminLogIn",
+      "UpstreamHttpMethod": [ "POST" ]
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:80"
+  }
+}

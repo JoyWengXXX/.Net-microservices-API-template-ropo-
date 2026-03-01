@@ -1,0 +1,235 @@
+{
+    "version":  "2.0.0",
+    "tasks":  [
+                  {
+                      "label":  "build",
+                      "command":  "dotnet",
+                      "type":  "shell",
+                      "args":  [
+                                   "build",
+                                   "${workspaceFolder}/SystemMain_WebApi.slnx",
+                                   "/property:GenerateFullPaths=true",
+                                   "/consoleloggerparameters:NoSummary"
+                               ],
+                      "group":  "build",
+                      "presentation":  {
+                                           "reveal":  "silent"
+                                       },
+                      "problemMatcher":  "$msCompile"
+                  },
+                  {
+                      "label":  "open-browser-GateWay",
+                      "type":  "process",
+                      "command":  "cmd.exe",
+                      "args":  [
+                                   "/c",
+                                   "start",
+                                   "msedge"
+                               ],
+                      "presentation":  {
+                                           "reveal":  "never"
+                                       },
+                      "dependsOn":  [
+                                        "build"
+                                    ],
+                      "problemMatcher":  [
+
+                                         ]
+                  },
+                  {
+                      "label":  "open-browser-ControllerService.cmd",
+                      "type":  "process",
+                      "command":  "cmd.exe",
+                      "args":  [
+                                   "/c",
+                                   "start",
+                                   "msedge",
+                                   "http://localhost:5311/swagger/index.html"
+                               ],
+                      "presentation":  {
+                                           "reveal":  "never"
+                                       },
+                      "dependsOn":  [
+                                        "build"
+                                    ],
+                      "problemMatcher":  [
+
+                                         ]
+                  },
+                  {
+                      "label":  "open-browser-ControllerService.query",
+                      "type":  "process",
+                      "command":  "cmd.exe",
+                      "args":  [
+                                   "/c",
+                                   "start",
+                                   "msedge",
+                                   "http://localhost:5312/swagger/index.html"
+                               ],
+                      "presentation":  {
+                                           "reveal":  "never"
+                                       },
+                      "dependsOn":  [
+                                        "build"
+                                    ],
+                      "problemMatcher":  [
+
+                                         ]
+                  },
+                  {
+                      "label":  "open-browser-LogInService.cmd",
+                      "type":  "process",
+                      "command":  "cmd.exe",
+                      "args":  [
+                                   "/c",
+                                   "start",
+                                   "msedge",
+                                   "http://localhost:5313/swagger/index.html"
+                               ],
+                      "presentation":  {
+                                           "reveal":  "never"
+                                       },
+                      "dependsOn":  [
+                                        "build"
+                                    ],
+                      "problemMatcher":  [
+
+                                         ]
+                  },
+                  {
+                      "label":  "open-browser-RolePermissionService.cmd",
+                      "type":  "process",
+                      "command":  "cmd.exe",
+                      "args":  [
+                                   "/c",
+                                   "start",
+                                   "msedge",
+                                   "http://localhost:5325/swagger/index.html"
+                               ],
+                      "presentation":  {
+                                           "reveal":  "never"
+                                       },
+                      "dependsOn":  [
+                                        "build"
+                                    ],
+                      "problemMatcher":  [
+
+                                         ]
+                  },
+                  {
+                      "label":  "open-browser-RolePermissionService.query",
+                      "type":  "process",
+                      "command":  "cmd.exe",
+                      "args":  [
+                                   "/c",
+                                   "start",
+                                   "msedge",
+                                   "http://localhost:5326/swagger/index.html"
+                               ],
+                      "presentation":  {
+                                           "reveal":  "never"
+                                       },
+                      "dependsOn":  [
+                                        "build"
+                                    ],
+                      "problemMatcher":  [
+
+                                         ]
+                  },
+                  {
+                      "label":  "open-browser-RoleService.cmd",
+                      "type":  "process",
+                      "command":  "cmd.exe",
+                      "args":  [
+                                   "/c",
+                                   "start",
+                                   "msedge",
+                                   "http://localhost:5327/swagger/index.html"
+                               ],
+                      "presentation":  {
+                                           "reveal":  "never"
+                                       },
+                      "dependsOn":  [
+                                        "build"
+                                    ],
+                      "problemMatcher":  [
+
+                                         ]
+                  },
+                  {
+                      "label":  "open-browser-RoleService.query",
+                      "type":  "process",
+                      "command":  "cmd.exe",
+                      "args":  [
+                                   "/c",
+                                   "start",
+                                   "msedge",
+                                   "http://localhost:5328/swagger/index.html"
+                               ],
+                      "presentation":  {
+                                           "reveal":  "never"
+                                       },
+                      "dependsOn":  [
+                                        "build"
+                                    ],
+                      "problemMatcher":  [
+
+                                         ]
+                  },
+                  {
+                      "label":  "open-browser-SignUpService.cmd",
+                      "type":  "process",
+                      "command":  "cmd.exe",
+                      "args":  [
+                                   "/c",
+                                   "start",
+                                   "msedge",
+                                   "http://localhost:5329/swagger/index.html"
+                               ],
+                      "presentation":  {
+                                           "reveal":  "never"
+                                       },
+                      "dependsOn":  [
+                                        "build"
+                                    ],
+                      "problemMatcher":  [
+
+                                         ]
+                  },
+                  {
+                      "label":  "open-browser-SignUpService.query",
+                      "type":  "process",
+                      "command":  "cmd.exe",
+                      "args":  [
+                                   "/c",
+                                   "start",
+                                   "msedge",
+                                   "http://localhost:5330/swagger/index.html"
+                               ],
+                      "presentation":  {
+                                           "reveal":  "never"
+                                       },
+                      "dependsOn":  [
+                                        "build"
+                                    ],
+                      "problemMatcher":  [
+
+                                         ]
+                  },
+                  {
+                      "label":  "build Service.Background",
+                      "command":  "dotnet",
+                      "type":  "shell",
+                      "args":  [
+                                   "build",
+                                   "${workspaceFolder}/Services/Service.Background/Service.Background.csproj",
+                                   "/property:GenerateFullPaths=true",
+                                   "/consoleloggerparameters:NoSummary"
+                               ],
+                      "group":  {
+                                    "kind":  "build",
+                                    "isDefault":  false
+                                }
+                  }
+              ]
+}

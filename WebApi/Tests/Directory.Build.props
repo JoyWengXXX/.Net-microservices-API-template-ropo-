@@ -1,0 +1,37 @@
+<Project>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)..'))"
+          Condition="'$([MSBuild]::GetPathOfFileAbove(`Directory.Build.props`, `$(MSBuildThisFileDirectory)..`))' != ''" />
+
+  <PropertyGroup>
+    <IsTestProject>true</IsTestProject>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Moq" />
+    <PackageReference Include="Shouldly" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <Using Include="Shouldly" />
+    <Using Include="DataAccess" />
+    <Using Include="DataAccess.Interfaces" />
+    <Using Include="SystemMain" />
+    <Using Include="SystemMain.Entities" />
+    <Using Include="Service.Common" />
+    <Using Include="Service.Common.Authorization.Interfaces" />
+    <Using Include="Service.Common.Helpers.Interfaces" />
+    <Using Include="Service.Common.Middleware" />
+    <Using Include="Service.Common.Models" />
+    <Using Include="CommonLibrary.Helpers" />
+    <Using Include="StackExchange.Redis" />
+    <Using Include="Moq" />
+    <Using Include="Microsoft.AspNetCore.Http" />
+    <Using Include="Microsoft.Extensions.Logging" />
+  </ItemGroup>
+</Project>

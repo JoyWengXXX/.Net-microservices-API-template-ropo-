@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <UserSecretsId>02ae69ca-0808-40dc-ad97-5acefea35617</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..</DockerfileContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Service.Common\Service.Common.csproj" />
+    <ProjectReference Include="..\ControllerService.Query.Domain\ControllerService.Query.Domain.csproj" />
+    <ProjectReference Include="..\ControllerService.Query.Infrastructure\ControllerService.Query.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
+

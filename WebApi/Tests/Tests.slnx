@@ -1,0 +1,29 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Tests/">
+    <Project Path="ConfigurationHelper.Test/ConfigurationHelper.Test.csproj" />
+    <Project Path="ControllerService.Test/ControllerService.Tests.csproj" />
+    <Project Path="LogInService.Test/LogInService.Tests.csproj" />
+    <Project Path="RoleService.Test/RoleService.Tests.csproj" />
+    <Project Path="SignUpService.Test/SignUpService.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Referenced Projects/">
+    <Project Path="../CommonLibrary/CommonLibrary.csproj" />
+    <Project Path="../CQRS.Core/CQRS.Core.csproj" />
+    <Project Path="../DataAccess/DataAccess.csproj" />
+    <Project Path="../DBContexts/SystemMain/SystemMain.csproj" />
+    <Project Path="../Services/Service.Common/Service.Common.csproj" />
+    <Project Path="../Services/ControllerService/ControllerService.Cmd.Domain/ControllerService.Cmd.Domain.csproj" />
+    <Project Path="../Services/ControllerService/ControllerService.Cmd.Infrastructure/ControllerService.Cmd.Infrastructure.csproj" />
+    <Project Path="../Services/LogInService/LogInService.Cmd.Infrastructure/LogInService.Cmd.Infrastructure.csproj" />
+    <Project Path="../Services/RoleService/RoleService.Cmd.Domain/UserRoleService.Cmd.Domain.csproj" />
+    <Project Path="../Services/RoleService/RoleService.Cmd.Infrastructure/UserRoleService.Cmd.Infrastructure.csproj" />
+    <Project Path="../Services/RoleService/RoleService.Query.Domain/UserRoleService.Query.Domain.csproj" />
+    <Project Path="../Services/RoleService/RoleService.Query.Infrastructure/UserRoleService.Query.Infrastructure.csproj" />
+    <Project Path="../Services/SignUpService/SignUpService.Cmd.Infrastructure/SignUpService.Cmd.Infrastructure.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <UserSecretsId>d9aa21f0-a5f1-4d40-95cc-7d0096a9dff5</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..</DockerfileContext>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\CQRS.Core\CQRS.Core.csproj" />
+    <ProjectReference Include="..\UserRolePermissionService.Cmd.Domain\UserRolePermissionService.Cmd.Domain.csproj" />
+    <ProjectReference Include="..\UserRolePermissionService.Cmd.Infrastructure\UserRolePermissionService.Cmd.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
+

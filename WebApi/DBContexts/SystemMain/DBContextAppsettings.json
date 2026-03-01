@@ -1,0 +1,26 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Host=postgres.local;Database=SystemMain;Username=postgres;Password=__PLACEHOLDER__",
+    "EventStoreConnection": "Host=postgres.local;Database=EventSourcing;Username=postgres;Password=__PLACEHOLDER__"
+  },
+  "RedisConnectionString": {
+    "RedisWithAOF": {
+      "ConnectionString": "redis.local:6379",
+      "ExpiryTime": 170
+    },
+    "RedisWithoutAOF": {
+      "ConnectionString": "redis.local:6378",
+      "ExpiryTime": 170
+    },
+    "EgmInfoRedisDbIdx": 1
+  },
+  "RabbitMQServer": {
+    "Host": "rabbitmq.local",
+    "Port": 5672,
+    "Username": "egmiot",
+    "Password": "__PLACEHOLDER__",
+    "VirtualHost": "/",
+    "AutomaticRecoveryEnabled": true,
+    "RequestedHeartbeat": 30
+  }
+}

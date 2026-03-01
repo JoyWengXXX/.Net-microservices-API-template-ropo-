@@ -1,0 +1,65 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/DBContexts/">
+    <Project Path="DBContexts/SystemMain/SystemMain.csproj" />
+  </Folder>
+  <Folder Name="/Services/">
+    <Project Path="Services/CommonFilesManagement/CommonFilesManagement.csproj" />
+    <Project Path="Services/Service.Common/Service.Common.csproj" />
+  </Folder>
+  <Folder Name="/Services/ControllerService/">
+    <Project Path="Services/ControllerService/ControllerService.Cmd.API/ControllerService.Cmd.API.csproj" />
+    <Project Path="Services/ControllerService/ControllerService.Cmd.Domain/ControllerService.Cmd.Domain.csproj" />
+    <Project Path="Services/ControllerService/ControllerService.Cmd.Infrastructure/ControllerService.Cmd.Infrastructure.csproj" />
+    <Project Path="Services/ControllerService/ControllerService.Query.API/ControllerService.Query.API.csproj" />
+    <Project Path="Services/ControllerService/ControllerService.Query.Domain/ControllerService.Query.Domain.csproj" />
+    <Project Path="Services/ControllerService/ControllerService.Query.Infrastructure/ControllerService.Query.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/Services/LogInService/">
+    <Project Path="Services/LogInService/LogInService.Cmd.API/LogInService.Cmd.API.csproj" />
+    <Project Path="Services/LogInService/LogInService.Cmd.Domain/LogInService.Cmd.Domain.csproj" />
+    <Project Path="Services/LogInService/LogInService.Cmd.Infrastructure/LogInService.Cmd.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/Services/Services.Shared/">
+    <Project Path="Services/Services.Shared/Services.Shared.FeatureFlag/Services.Shared.FeatureFlag.csproj" />
+  </Folder>
+  <Folder Name="/Services/SignUpService/">
+    <Project Path="Services/SignUpService/SignUpService.Cmd.API/SignUpService.Cmd.API.csproj" />
+    <Project Path="Services/SignUpService/SignUpService.Cmd.Domain/SignUpService.Cmd.Domain.csproj" />
+    <Project Path="Services/SignUpService/SignUpService.Cmd.Infrastructure/SignUpService.Cmd.Infrastructure.csproj" />
+    <Project Path="Services/SignUpService/SignUpService.Query.API/SignUpService.Query.API.csproj" />
+    <Project Path="Services/SignUpService/SignUpService.Query.Domain/SignUpService.Query.Domain.csproj" />
+    <Project Path="Services/SignUpService/SignUpService.Query.Infrastructure/SignUpService.Query.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/Services/UserRolePermissionService/">
+    <Project Path="Services/RolePermissionService/UserRolePermissionService.Cmd.API/UserRolePermissionService.Cmd.API.csproj" />
+    <Project Path="Services/RolePermissionService/UserRolePermissionService.Cmd.Domain/UserRolePermissionService.Cmd.Domain.csproj" />
+    <Project Path="Services/RolePermissionService/UserRolePermissionService.Cmd.Infrastructure/UserRolePermissionService.Cmd.Infrastructure.csproj" />
+    <Project Path="Services/RolePermissionService/UserRolePermissionService.Query.API/UserRolePermissionService.Query.API.csproj" />
+    <Project Path="Services/RolePermissionService/UserRolePermissionService.Query.Domain/UserRolePermissionService.Query.Domain.csproj" />
+    <Project Path="Services/RolePermissionService/UserRolePermissionService.Query.Infrastructure/UserRolePermissionService.Query.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/Services/UserRoleService/">
+    <Project Path="Services/RoleService/RoleService.Cmd.API/UserRoleService.Cmd.API.csproj" />
+    <Project Path="Services/RoleService/RoleService.Cmd.Domain/UserRoleService.Cmd.Domain.csproj" />
+    <Project Path="Services/RoleService/RoleService.Cmd.Infrastructure/UserRoleService.Cmd.Infrastructure.csproj" />
+    <Project Path="Services/RoleService/RoleService.Query.API/UserRoleService.Query.API.csproj" />
+    <Project Path="Services/RoleService/RoleService.Query.Domain/UserRoleService.Query.Domain.csproj" />
+    <Project Path="Services/RoleService/RoleService.Query.Infrastructure/UserRoleService.Query.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/ConfigurationHelper.Test/ConfigurationHelper.Test.csproj" />
+    <Project Path="Tests/ControllerService.Test/ControllerService.Tests.csproj" />
+    <Project Path="Tests/LogInService.Test/LogInService.Tests.csproj" />
+    <Project Path="Tests/RoleService.Test/RoleService.Tests.csproj" />
+    <Project Path="Tests/SignUpService.Test/SignUpService.Tests.csproj" />
+  </Folder>
+  <Project Path="CommonLibrary/CommonLibrary.csproj" />
+  <Project Path="CQRS.Core/CQRS.Core.csproj" />
+  <Project Path="DataAccess/DataAccess.csproj" />
+  <Project Path="GateWay/GateWay.csproj" />
+</Solution>

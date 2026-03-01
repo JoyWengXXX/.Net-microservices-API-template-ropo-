@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\CQRS.Core\CQRS.Core.csproj" />
+    <ProjectReference Include="..\..\..\DBContexts\SystemMain\SystemMain.csproj" />
+    <ProjectReference Include="..\..\Service.Common\Service.Common.csproj" />
+  </ItemGroup>
+
+</Project>
+

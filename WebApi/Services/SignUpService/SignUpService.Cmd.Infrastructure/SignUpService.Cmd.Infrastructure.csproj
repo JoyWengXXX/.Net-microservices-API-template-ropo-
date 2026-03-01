@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <None Remove="Handlers\EventHandler.cs~RF216a16fc.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.Core" />
+    <PackageReference Include="AWSSDK.IoT" />
+    <PackageReference Include="LinqKit.Core" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\CQRS.Core\CQRS.Core.csproj" />
+    <ProjectReference Include="..\..\..\DataAccess\DataAccess.csproj" />
+    <ProjectReference Include="..\..\..\DBContexts\SystemMain\SystemMain.csproj" />
+    <ProjectReference Include="..\SignUpService.Cmd.Domain\SignUpService.Cmd.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
+

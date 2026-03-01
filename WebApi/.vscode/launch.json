@@ -1,0 +1,180 @@
+{
+    "version":  "0.2.0",
+    "configurations":  [
+                           {
+                               "name":  "GateWay",
+                               "type":  "coreclr",
+                               "request":  "launch",
+                               "preLaunchTask":  "open-browser-GateWay",
+                               "program":  "${workspaceFolder}/GateWay/bin/Debug/net9.0/GateWay.dll",
+                               "args":  [
+
+                                        ],
+                               "cwd":  "${workspaceFolder}/GateWay",
+                               "stopAtEntry":  false,
+                               "env":  {
+                                           "ASPNETCORE_ENVIRONMENT":  "Development",
+                                           "ASPNETCORE_URLS":  "http://localhost:80"
+                                       }
+                           },
+                           {
+                               "name":  "ControllerService.Cmd.API",
+                               "type":  "coreclr",
+                               "request":  "launch",
+                               "preLaunchTask":  "open-browser-ControllerService.cmd",
+                               "program":  "${workspaceFolder}/Services/ControllerService/ControllerService.Cmd.API/bin/Debug/net9.0/ControllerService.Cmd.API.dll",
+                               "args":  [
+
+                                        ],
+                               "cwd":  "${workspaceFolder}/Services/ControllerService/ControllerService.Cmd.API",
+                               "stopAtEntry":  false,
+                               "env":  {
+                                           "ASPNETCORE_ENVIRONMENT":  "Development",
+                                           "ASPNETCORE_URLS":  "http://localhost:5311"
+                                       }
+                           },
+                           {
+                               "name":  "ControllerService.Query.API",
+                               "type":  "coreclr",
+                               "request":  "launch",
+                               "preLaunchTask":  "open-browser-ControllerService.query",
+                               "program":  "${workspaceFolder}/Services/ControllerService/ControllerService.Query.API/bin/Debug/net9.0/ControllerService.Query.API.dll",
+                               "args":  [
+
+                                        ],
+                               "cwd":  "${workspaceFolder}/Services/ControllerService/ControllerService.Query.API",
+                               "stopAtEntry":  false,
+                               "env":  {
+                                           "ASPNETCORE_ENVIRONMENT":  "Development",
+                                           "ASPNETCORE_URLS":  "http://localhost:5312"
+                                       }
+                           },
+                           {
+                               "name":  "LogInService.Cmd.API",
+                               "type":  "coreclr",
+                               "request":  "launch",
+                               "preLaunchTask":  "open-browser-LogInService.cmd",
+                               "program":  "${workspaceFolder}/Services/LogInService/LogInService.Cmd.API/bin/Debug/net9.0/LogInService.Cmd.API.dll",
+                               "args":  [
+
+                                        ],
+                               "cwd":  "${workspaceFolder}/Services/LogInService/LogInService.Cmd.API",
+                               "stopAtEntry":  false,
+                               "env":  {
+                                           "ASPNETCORE_ENVIRONMENT":  "Development",
+                                           "ASPNETCORE_URLS":  "http://localhost:5313"
+                                       }
+                           },
+                           {
+                               "name":  "RolePermissionService.Cmd.API",
+                               "type":  "coreclr",
+                               "request":  "launch",
+                               "preLaunchTask":  "open-browser-RolePermissionService.cmd",
+                               "program":  "${workspaceFolder}/Services/RolePermissionService/RolePermissionService.Cmd.API/bin/Debug/net9.0/RolePermissionService.Cmd.API.dll",
+                               "args":  [
+
+                                        ],
+                               "cwd":  "${workspaceFolder}/Services/RolePermissionService/RolePermissionService.Cmd.API",
+                               "stopAtEntry":  false,
+                               "env":  {
+                                           "ASPNETCORE_ENVIRONMENT":  "Development",
+                                           "ASPNETCORE_URLS":  "http://localhost:5325"
+                                       }
+                           },
+                           {
+                               "name":  "RolePermissionService.Query.API",
+                               "type":  "coreclr",
+                               "request":  "launch",
+                               "preLaunchTask":  "open-browser-RolePermissionService.query",
+                               "program":  "${workspaceFolder}/Services/RolePermissionService/RolePermissionService.Query.API/bin/Debug/net9.0/RolePermissionService.Query.API.dll",
+                               "args":  [
+
+                                        ],
+                               "cwd":  "${workspaceFolder}/Services/RolePermissionService/RolePermissionService.Query.API",
+                               "stopAtEntry":  false,
+                               "env":  {
+                                           "ASPNETCORE_ENVIRONMENT":  "Development",
+                                           "ASPNETCORE_URLS":  "http://localhost:5326"
+                                       }
+                           },
+                           {
+                               "name":  "RoleService.Cmd.API",
+                               "type":  "coreclr",
+                               "request":  "launch",
+                               "preLaunchTask":  "open-browser-RoleService.cmd",
+                               "program":  "${workspaceFolder}/Services/RoleService/RoleService.Cmd.API/bin/Debug/net9.0/RoleService.Cmd.API.dll",
+                               "args":  [
+
+                                        ],
+                               "cwd":  "${workspaceFolder}/Services/RoleService/RoleService.Cmd.API",
+                               "stopAtEntry":  false,
+                               "env":  {
+                                           "ASPNETCORE_ENVIRONMENT":  "Development",
+                                           "ASPNETCORE_URLS":  "http://localhost:5327"
+                                       }
+                           },
+                           {
+                               "name":  "RoleService.Query.API",
+                               "type":  "coreclr",
+                               "request":  "launch",
+                               "preLaunchTask":  "open-browser-RoleService.query",
+                               "program":  "${workspaceFolder}/Services/RoleService/RoleService.Query.API/bin/Debug/net9.0/RoleService.Query.API.dll",
+                               "args":  [
+
+                                        ],
+                               "cwd":  "${workspaceFolder}/Services/RoleService/RoleService.Query.API",
+                               "stopAtEntry":  false,
+                               "env":  {
+                                           "ASPNETCORE_ENVIRONMENT":  "Development",
+                                           "ASPNETCORE_URLS":  "http://localhost:5328"
+                                       }
+                           },
+                           {
+                               "name":  "SignUpService.Cmd.API",
+                               "type":  "coreclr",
+                               "request":  "launch",
+                               "preLaunchTask":  "open-browser-SignUpService.cmd",
+                               "program":  "${workspaceFolder}/Services/SignUpService/SignUpService.Cmd.API/bin/Debug/net9.0/SignUpService.Cmd.API.dll",
+                               "args":  [
+
+                                        ],
+                               "cwd":  "${workspaceFolder}/Services/SignUpService/SignUpService.Cmd.API",
+                               "stopAtEntry":  false,
+                               "env":  {
+                                           "ASPNETCORE_ENVIRONMENT":  "Development",
+                                           "ASPNETCORE_URLS":  "http://localhost:5329"
+                                       }
+                           },
+                           {
+                               "name":  "SignUpService.Query.API",
+                               "type":  "coreclr",
+                               "request":  "launch",
+                               "preLaunchTask":  "open-browser-SignUpService.query",
+                               "program":  "${workspaceFolder}/Services/SignUpService/SignUpService.Query.API/bin/Debug/net9.0/SignUpService.Query.API.dll",
+                               "args":  [
+
+                                        ],
+                               "cwd":  "${workspaceFolder}/Services/SignUpService/SignUpService.Query.API",
+                               "stopAtEntry":  false,
+                               "env":  {
+                                           "ASPNETCORE_ENVIRONMENT":  "Development",
+                                           "ASPNETCORE_URLS":  "http://localhost:5330"
+                                       }
+                           },
+                           {
+                               "name":  "Service.Background",
+                               "type":  "coreclr",
+                               "request":  "launch",
+                               "preLaunchTask":  "build Service.Background",
+                               "program":  "${workspaceFolder}/Services/Service.Background/bin/Debug/net9.0/Service.Background.dll",
+                               "args":  [
+
+                                        ],
+                               "cwd":  "${workspaceFolder}/Services/Service.Background",
+                               "stopAtEntry":  false,
+                               "env":  {
+                                           "ASPNETCORE_ENVIRONMENT":  "Development"
+                                       }
+                           }
+                       ]
+}

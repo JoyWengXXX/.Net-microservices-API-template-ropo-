@@ -1,0 +1,6 @@
+@PageService.Cmd.API_HostAddress = http://localhost:5125
+
+GET {{PageService.Cmd.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

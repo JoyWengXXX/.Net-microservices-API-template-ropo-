@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\DBContexts\SystemMain\SystemMain.csproj" />
+    <ProjectReference Include="..\..\Service.Common\Service.Common.csproj" />
+    <ProjectReference Include="..\ControllerService.Query.Domain\ControllerService.Query.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
+

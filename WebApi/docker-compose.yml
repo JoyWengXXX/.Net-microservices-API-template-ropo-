@@ -1,0 +1,143 @@
+# =============================================================================
+# 共用設定定義 (YAML Anchors)
+# =============================================================================
+
+# 基礎服務設定（CMD 服務 - 無 LaunchDarkly）
+# Redis 位於獨立 VM，透過 redis.local:6379 連線，不在此 compose 管理
+x-service-base: &service-base
+  networks:
+    - system-network
+  restart: unless-stopped
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10m"
+      max-file: "3"
+  environment:
+    ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+    RedisConnectionString__ConnectionString: redis.local:6379
+
+# Query 服務設定（包含 LaunchDarkly）
+x-service-query: &service-query
+  networks:
+    - system-network
+  restart: unless-stopped
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10m"
+      max-file: "3"
+  environment:
+    ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+    RedisConnectionString__ConnectionString: redis.local:6379
+    LAUNCHDARKLY_SDK_KEY: sdk-5f9f5774-116f-40c3-9c7d-58236e6ba79e
+
+# =============================================================================
+# Services
+# =============================================================================
+
+services:
+  # ===========================================================================
+  # Gateway & Background Services
+  # ===========================================================================
+
+  systemapi_gateway:
+    <<: *service-base
+    image: ${HARBOR_REGISTRY}/${HARBOR_PROJECT}/systemapi_gateway:${systemAPI_GATEWAY_TAG}
+    user: root
+    container_name: systemapi_gateway
+    ports:
+      - "80:80"
+      - "443:443"
+
+  # ===========================================================================
+  # Controller Services
+  # ===========================================================================
+
+  systemapi_controller_cmd:
+    <<: *service-base
+    image: ${HARBOR_REGISTRY}/${HARBOR_PROJECT}/systemapi_controller_cmd:${systemAPI_CONTROLLER_CMD_TAG}
+    container_name: systemapi_controller_cmd
+    ports:
+      - "5126:8080"
+
+  systemapi_controller_query:
+    <<: *service-query
+    image: ${HARBOR_REGISTRY}/${HARBOR_PROJECT}/systemapi_controller_query:${systemAPI_CONTROLLER_QUERY_TAG}
+    container_name: systemapi_controller_query
+    ports:
+      - "5044:8080"
+
+  # ===========================================================================
+  # Login Service
+  # ===========================================================================
+
+  systemapi_login_cmd:
+    <<: *service-base
+    image: ${HARBOR_REGISTRY}/${HARBOR_PROJECT}/systemapi_login_cmd:${systemAPI_LOGIN_CMD_TAG}
+    container_name: systemapi_login_cmd
+    ports:
+      - "5246:8080"
+
+  # ===========================================================================
+  # Signup Services
+  # ===========================================================================
+
+  systemapi_signup_cmd:
+    <<: *service-base
+    image: ${HARBOR_REGISTRY}/${HARBOR_PROJECT}/systemapi_signup_cmd:${systemAPI_SIGNUP_CMD_TAG}
+    container_name: systemapi_signup_cmd
+    ports:
+      - "5215:8080"
+
+  systemapi_signup_query:
+    <<: *service-query
+    image: ${HARBOR_REGISTRY}/${HARBOR_PROJECT}/systemapi_signup_query:${systemAPI_SIGNUP_QUERY_TAG}
+    container_name: systemapi_signup_query
+    ports:
+      - "5289:8080"
+
+  # ===========================================================================
+  # Role Permission Services
+  # ===========================================================================
+
+  systemapi_rolepermission_cmd:
+    <<: *service-base
+    image: ${HARBOR_REGISTRY}/${HARBOR_PROJECT}/systemapi_rolepermission_cmd:${systemAPI_ROLEPERMISSION_CMD_TAG}
+    container_name: systemapi_rolepermission_cmd
+    ports:
+      - "5114:8080"
+
+  systemapi_rolepermission_query:
+    <<: *service-query
+    image: ${HARBOR_REGISTRY}/${HARBOR_PROJECT}/systemapi_rolepermission_query:${systemAPI_ROLEPERMISSION_QUERY_TAG}
+    container_name: systemapi_rolepermission_query
+    ports:
+      - "5256:8080"
+
+  # ===========================================================================
+  # Role Services
+  # ===========================================================================
+
+  systemapi_role_cmd:
+    <<: *service-base
+    image: ${HARBOR_REGISTRY}/${HARBOR_PROJECT}/systemapi_role_cmd:${systemAPI_ROLE_CMD_TAG}
+    container_name: systemapi_role_cmd
+    ports:
+      - "5121:8080"
+
+  systemapi_role_query:
+    <<: *service-query
+    image: ${HARBOR_REGISTRY}/${HARBOR_PROJECT}/systemapi_role_query:${systemAPI_ROLE_QUERY_TAG}
+    container_name: systemapi_role_query
+    ports:
+      - "5128:8080"
+
+# =============================================================================
+# Networks
+# =============================================================================
+
+networks:
+  system-network:
+    name: system-${ASPNETCORE_ENVIRONMENT}
+    driver: bridge

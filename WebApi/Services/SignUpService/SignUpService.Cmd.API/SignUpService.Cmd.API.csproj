@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <UserSecretsId>3a74c60b-6639-4580-8dbe-0091ca969f0d</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..</DockerfileContext>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\CQRS.Core\CQRS.Core.csproj" />
+    <ProjectReference Include="..\..\..\DataAccess\DataAccess.csproj" />
+    <ProjectReference Include="..\..\Service.Common\Service.Common.csproj" />
+    <ProjectReference Include="..\SignUpService.Cmd.Domain\SignUpService.Cmd.Domain.csproj" />
+    <ProjectReference Include="..\SignUpService.Cmd.Infrastructure\SignUpService.Cmd.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
+

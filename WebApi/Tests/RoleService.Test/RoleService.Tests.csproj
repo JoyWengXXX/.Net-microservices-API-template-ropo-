@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\\..\\CommonLibrary\CommonLibrary.csproj" />
+    <ProjectReference Include="..\\..\\CQRS.Core\CQRS.Core.csproj" />
+    <ProjectReference Include="..\\..\\DataAccess\DataAccess.csproj" />
+    <ProjectReference Include="..\\..\\DBContexts\SystemMain\SystemMain.csproj" />
+    <ProjectReference Include="..\\..\\Services\Service.Common\Service.Common.csproj" />
+    <ProjectReference Include="..\\..\\Services\RoleService\RoleService.Cmd.Domain\UserRoleService.Cmd.Domain.csproj" />
+    <ProjectReference Include="..\\..\\Services\RoleService\RoleService.Cmd.Infrastructure\UserRoleService.Cmd.Infrastructure.csproj" />
+    <ProjectReference Include="..\\..\\Services\RoleService\RoleService.Query.Domain\UserRoleService.Query.Domain.csproj" />
+    <ProjectReference Include="..\\..\\Services\RoleService\RoleService.Query.Infrastructure\UserRoleService.Query.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>
+

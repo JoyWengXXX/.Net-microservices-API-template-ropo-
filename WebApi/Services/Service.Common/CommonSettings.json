@@ -1,0 +1,57 @@
+{
+  "JWTSettings": {
+    "Issuer": "JOY",
+    "SignKey": "__PLACEHOLDER__",
+    "ExpireTimeInHour": "168"
+  },
+  "SystemConfig": {
+    "GateWayPath": "https://localhost",
+    "WebPath": "https://localhost",
+    "IncomeValue": 10,
+    "AESEncryptKey": "__PLACEHOLDER__"
+  },
+  "SMTPServerSetting": {
+    "Host": "smtp.gmail.com",
+    "Port": "587",
+    "UserAccount": "example@gmail.com",
+    "Password": "__PLACEHOLDER__"
+  },
+  "BasicAWSCredentials": {
+    "MQTTBroker": "a2xja3k2r4tjq4-ats.iot.us-east-1.amazonaws.com",
+    "MQTTPort": 8883,
+    "AccessKey": "__PLACEHOLDER__",
+    "SecretKey": "__PLACEHOLDER__",
+    "Region": "__PLACEHOLDER__"
+},
+  "FCMConfig": {
+    "FCM_URL": "https://fcm.googleapis.com/v1/projects/egmiot-9a551/messages:send"
+  },
+  "Seq": {
+    "ServerUrl": "http://seq.local:5341",
+    "ApiKey": "__PLACEHOLDER__"
+  },
+  "ECPaySettings": {
+    "AiOPaymentSettings": {
+      "MerchantID": "3002607",
+      "HashKey": "__PLACEHOLDER__",
+      "HashIV": "__PLACEHOLDER__",
+      "ServiceURL": "https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5",
+      "PlatformID ": "",
+      "ReturnURL": "https://localhost/api/ECPayment/ECPaymentResult",
+      "OrderResultURL": ""
+    },
+    "B2CInvoiceSettings": {
+      "MerchantID": "2000132",
+      "HashKey": "__PLACEHOLDER__",
+      "HashIV": "__PLACEHOLDER__",
+      "PreProcessStep1ServiceURL": "https://einvoice-stage.ecpay.com.tw/B2CInvoice/GetGovInvoiceWordSetting",
+      "PreProcessStep2ServiceURL": "https://einvoice-stage.ecpay.com.tw/B2CInvoice/AddInvoiceWordSetting",
+      "PreProcessStep3ServiceURL": "https://einvoice-stage.ecpay.com.tw/B2CInvoice/UpdateInvoiceWordStatus",
+      "PreProcessStep4ServiceURL": "https://einvoice-stage.ecpay.com.tw/B2CInvoice/GetInvoiceWordSetting",
+      "InputVerification1ServiceURL": "https://einvoice-stage.ecpay.com.tw/B2CInvoice/GetCompanyNameByTaxID",
+      "InputVerification2ServiceURL": "https://einvoice-stage.ecpay.com.tw/B2CInvoice/CheckBarcode",
+      "InputVerification3ServiceURL": "https://einvoice-stage.ecpay.com.tw/B2CInvoice/CheckLoveCode",
+      "ServiceURL": "https://einvoice-stage.ecpay.com.tw/B2CInvoice/Issue"
+    }
+  }
+}

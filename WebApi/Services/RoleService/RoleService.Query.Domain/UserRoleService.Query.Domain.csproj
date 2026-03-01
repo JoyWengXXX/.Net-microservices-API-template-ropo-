@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>RoleService.Query.Domain</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\CQRS.Core\CQRS.Core.csproj" />
+    <ProjectReference Include="..\..\..\DataAccess\DataAccess.csproj" />
+    <ProjectReference Include="..\..\..\DBContexts\SystemMain\SystemMain.csproj" />
+  </ItemGroup>
+
+</Project>
+

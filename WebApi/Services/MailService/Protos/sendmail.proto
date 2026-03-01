@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option csharp_namespace = "MailService";
+
+package mail;
+
+// The mail service definition.
+service Mail {
+  // Sends a mail
+  rpc SendMail (SendRequest) returns (SendReply);
+}
+
+message SendRequest {
+  string To = 1;
+  string Subject = 2;
+  string Body = 3;
+}
+
+message SendReply {
+  bool Result = 1;
+  string Message = 2;
+}
