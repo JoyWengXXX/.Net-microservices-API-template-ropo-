@@ -1,0 +1,11 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace {{ServiceName}}.Cmd.Domain.DTOs
+{
+    public class Add{{EntityName}}DTO
+    {
+        [Required]
+        public string {{entityId}} { get; set; }
+        // TODO: 加入新增所需的欄位
+    }
+}

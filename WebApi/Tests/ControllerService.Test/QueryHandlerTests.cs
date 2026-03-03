@@ -1,36 +1,125 @@
 using System.Linq.Expressions;
+using ControllerService.Query.Domain.Queries;
+using ControllerService.Query.Infrastructure.Handlers;
 
-namespace ControllerService.Tests
+namespace ControllerService.Tests;
+
+public class QueryHandlerTests
 {
-    public class QueryHandlerTests
+    private readonly Mock<IRepository<MainDBConnectionManager>> _mockRepo;
+    private readonly QueryHandler _sut;
+
+    public QueryHandlerTests()
     {
-        private readonly Mock<IRepository<MainDBConnectionManager>> mockRepo;
-        private readonly Query.Infrastructure.Handlers.QueryHandler queryHandler;
+        _mockRepo = new Mock<IRepository<MainDBConnectionManager>>();
+        _sut = new QueryHandler(_mockRepo.Object);
+    }
 
-        public QueryHandlerTests()
+    // ── HandleAsync(GetControllersQuery) ──────────────────────────────────
+
+    [Fact]
+    public async Task HandleAsync_GetControllersQuery_WithData_ReturnsAllControllers()
+    {
+        // Arrange
+        var mockList = new List<Controller>
         {
-            mockRepo = new Mock<IRepository<MainDBConnectionManager>>();
-            queryHandler = new Query.Infrastructure.Handlers.QueryHandler(mockRepo.Object);
-        }
+            new Controller { ControllerId = "CTRL_001", ControllerName = "Controller A" },
+            new Controller { ControllerId = "CTRL_002", ControllerName = "Controller B" },
+        };
+        _mockRepo.Setup(x => x.GetListAsync(
+            It.IsAny<Expression<Func<Controller, object>>>(),
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            null,
+            null))
+            .ReturnsAsync(mockList);
 
-        [Fact]
-        public async Task On_GetPagesQuery_ReturnsTResultWithSuccessAndResults()
-        {
-            // Arrange
-            var mockedResultObject = new List<Controller>() 
-            {
-                new Controller() { ControllerId = "TEST_Function", ControllerName = "Admin", IsEnable = true },
-                new Controller() { ControllerId = "TEST_Function", ControllerName = "User", IsEnable = true },
-                new Controller() { ControllerId = "TEST_Function", ControllerName = "Disabled", IsEnable = false }
-            };
-            mockRepo.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<Controller, object>>>(), It.IsAny<Expression<Func<Controller, bool>>>(), null, It.IsAny<IUnitOfWork>())).ReturnsAsync(mockedResultObject);
+        // Act
+        var result = await _sut.HandleAsync(new GetControllersQuery());
 
-            // Act
-            var result = await queryHandler.HandleAsync(new ControllerService.Query.Domain.Queries.GetControllersQuery());
+        // Assert
+        Assert.True(result.isSuccess);
+        var data = Assert.IsType<List<Controller>>(result.executionData);
+        Assert.Equal(2, data.Count);
+        _mockRepo.Verify(x => x.GetListAsync(
+            It.IsAny<Expression<Func<Controller, object>>>(),
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            null,
+            null), Times.Once);
+    }
 
-            // Assert
-            Assert.Equal(mockedResultObject, result.executionData);
-        }
+    [Fact]
+    public async Task HandleAsync_GetControllersQuery_WhenEmpty_ThrowsAppException()
+    {
+        // Arrange
+        _mockRepo.Setup(x => x.GetListAsync(
+            It.IsAny<Expression<Func<Controller, object>>>(),
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            null,
+            null))
+            .ReturnsAsync(new List<Controller>());
+
+        // Act & Assert
+        await Assert.ThrowsAsync<AppException>(() =>
+            _sut.HandleAsync(new GetControllersQuery()));
+    }
+
+    [Fact]
+    public async Task HandleAsync_GetControllersQuery_WhenNull_ThrowsAppException()
+    {
+        // Arrange
+        _mockRepo.Setup(x => x.GetListAsync(
+            It.IsAny<Expression<Func<Controller, object>>>(),
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            null,
+            null))
+            .ReturnsAsync((IEnumerable<Controller>)null);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<AppException>(() =>
+            _sut.HandleAsync(new GetControllersQuery()));
+    }
+
+    // ── HandleAsync(GetControllerByIdQuery) ───────────────────────────────
+
+    [Fact]
+    public async Task HandleAsync_GetControllerByIdQuery_WhenFound_ReturnsController()
+    {
+        // Arrange
+        var existing = new Controller { ControllerId = "CTRL_001", ControllerName = "My Controller" };
+        _mockRepo.Setup(x => x.GetFirstAsync(
+            It.IsAny<Expression<Func<Controller, object>>>(),
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            null,
+            null))
+            .ReturnsAsync(existing);
+
+        // Act
+        var result = await _sut.HandleAsync(new GetControllerByIdQuery { ControllerId = "CTRL_001" });
+
+        // Assert
+        Assert.True(result.isSuccess);
+        var data = Assert.IsType<Controller>(result.executionData);
+        Assert.Equal("CTRL_001", data.ControllerId);
+        _mockRepo.Verify(x => x.GetFirstAsync(
+            It.IsAny<Expression<Func<Controller, object>>>(),
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            null,
+            null), Times.Once);
+    }
+
+    [Fact]
+    public async Task HandleAsync_GetControllerByIdQuery_WhenNotFound_ThrowsAppException()
+    {
+        // Arrange
+        _mockRepo.Setup(x => x.GetFirstAsync(
+            It.IsAny<Expression<Func<Controller, object>>>(),
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            null,
+            null))
+            .ReturnsAsync((Controller)null);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<AppException>(() =>
+            _sut.HandleAsync(new GetControllerByIdQuery { ControllerId = "NON_EXISTENT" }));
     }
 }
-

@@ -1,0 +1,44 @@
+using CQRS.Core.Handlers;
+using CQRS.Core.Infrastructure;
+using {{ServiceName}}.Cmd.API.Commands.Interfaces;
+using {{ServiceName}}.Cmd.Domain.Aggregates;
+
+namespace {{ServiceName}}.Cmd.API.Commands
+{
+    public class CommandHandler : ICommandHandler
+    {
+        private readonly IEventSourcingHandler<{{EntityName}}Aggregate> _eventSourcingHandler;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly bool _isEventSourcingEnabled;
+
+        public CommandHandler(
+            IEventSourcingHandler<{{EntityName}}Aggregate> eventSourcingHandler,
+            IHttpContextAccessor httpContextAccessor,
+            IConfiguration configuration)
+        {
+            _eventSourcingHandler = eventSourcingHandler;
+            _httpContextAccessor = httpContextAccessor;
+            _isEventSourcingEnabled = configuration.GetValue<bool>("EventSouringEnable");
+        }
+
+        public async Task<TResult> HandleAsync(Add{{EntityName}}Command command)
+        {
+            var aggregate = new {{EntityName}}Aggregate(_httpContextAccessor, command.id, command.input);
+            return await _eventSourcingHandler.SaveAsync(aggregate, _isEventSourcingEnabled);
+        }
+
+        public async Task<TResult> HandleAsync(Update{{EntityName}}Command command)
+        {
+            var aggregate = await _eventSourcingHandler.GetByIdAsync(command.id, _isEventSourcingEnabled);
+            aggregate.Update{{EntityName}}(command.input);
+            return await _eventSourcingHandler.SaveAsync(aggregate, _isEventSourcingEnabled);
+        }
+
+        public async Task<TResult> HandleAsync(Disable{{EntityName}}Command command)
+        {
+            var aggregate = await _eventSourcingHandler.GetByIdAsync(command.id, _isEventSourcingEnabled);
+            aggregate.Disable{{EntityName}}(command.{{EntityId}});
+            return await _eventSourcingHandler.SaveAsync(aggregate, _isEventSourcingEnabled);
+        }
+    }
+}

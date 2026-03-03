@@ -1,0 +1,76 @@
+using CQRS.Core.Domain;
+using {{ServiceName}}.Cmd.Domain.Events;
+using {{ServiceName}}.Cmd.Domain.DTOs;
+using Microsoft.AspNetCore.Http;
+
+namespace {{ServiceName}}.Cmd.Domain.Aggregates
+{
+    public class {{EntityName}}Aggregate : AggregateRoot
+    {
+        private bool _active;
+        public bool Active { get => _active; set => _active = value; }
+
+        public {{EntityName}}Aggregate(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor) { }
+
+        public {{EntityName}}Aggregate(IHttpContextAccessor httpContextAccessor, Guid messageId, Add{{EntityName}}DTO input)
+            : base(httpContextAccessor)
+        {
+            RaiseEvent(new Add{{EntityName}}Event
+            {
+                id = messageId,
+                {{entityId}} = input.{{entityId}},
+                EventOperator = GetCurrentOperatorId(),
+                Type = nameof({{EntityName}}Aggregate)
+            });
+        }
+
+        public void Apply(Add{{EntityName}}Event @event)
+        {
+            _id = @event.id;
+            _active = true;
+        }
+
+        public void Update{{EntityName}}(Update{{EntityName}}DTO input)
+        {
+            if (!_active)
+            {
+                throw new InvalidOperationException("Cannot update an inactive {{entityName}}.");
+            }
+
+            RaiseEvent(new Update{{EntityName}}Event
+            {
+                id = _id,
+                {{entityId}} = input.{{entityId}},
+                EventOperator = GetCurrentOperatorId(),
+                Type = nameof({{EntityName}}Aggregate)
+            });
+        }
+
+        public void Apply(Update{{EntityName}}Event @event)
+        {
+            _id = @event.id;
+        }
+
+        public void Disable{{EntityName}}(string input)
+        {
+            if (!_active)
+            {
+                throw new InvalidOperationException("Cannot disable an already inactive {{entityName}}.");
+            }
+
+            RaiseEvent(new Disable{{EntityName}}Event
+            {
+                id = _id,
+                {{entityId}} = input,
+                EventOperator = GetCurrentOperatorId(),
+                Type = nameof({{EntityName}}Aggregate)
+            });
+        }
+
+        public void Apply(Disable{{EntityName}}Event @event)
+        {
+            _id = @event.id;
+            _active = false;
+        }
+    }
+}

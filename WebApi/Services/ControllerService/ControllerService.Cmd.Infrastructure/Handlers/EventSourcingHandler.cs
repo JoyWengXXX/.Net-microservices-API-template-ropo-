@@ -1,7 +1,6 @@
 using CQRS.Core.Domain;
 using CQRS.Core.Handlers;
 using CQRS.Core.Infrastructure;
-using Microsoft.Extensions.Configuration;
 using ControllerService.Cmd.Domain.Aggregates;
 using ControllerService.Cmd.Domain.Handlers;
 using Microsoft.AspNetCore.Http;
@@ -53,18 +52,16 @@ namespace ControllerService.Cmd.Infrastructure.Handlers
             }
             else
             {
+                TResult lastResult = null;
                 foreach (var @event in aggregate.GetUncommittedChanges())
                 {
                     // Handle reflecting method
-                    var handlerMethod = _eventHandler.GetType().GetMethod("On", [@event.GetType()]);
-                    if (handlerMethod == null)
-                    {
-                        throw new ArgumentNullException(nameof(handlerMethod), "Could not find event handler method!");
-                    }
+                    var handlerMethod = _eventHandler.GetType().GetMethod("On", [@event.GetType()])
+                        ?? throw new ArgumentNullException("handlerMethod", "Could not find event handler method!");
                     var task = handlerMethod.Invoke(_eventHandler, new[] { @event });
-                    return await (Task<TResult>)task;
+                    lastResult = await (Task<TResult>)task;
                 }
-                return default;
+                return lastResult ?? new TResult { isSuccess = true };
             }
         }
 

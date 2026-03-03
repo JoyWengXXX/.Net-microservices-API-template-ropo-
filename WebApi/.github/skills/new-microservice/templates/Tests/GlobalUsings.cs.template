@@ -1,0 +1,9 @@
+global using Xunit;
+global using Moq;
+global using DataAccess.Interfaces;
+global using DataAccess;
+global using DBContexts.SystemMain;
+global using DBContexts.SystemMain.Models;
+global using SystemMain.Entities;
+global using {{ServiceName}}.Cmd.Domain.Events;
+global using {{ServiceName}}.Query.Domain.Queries;

@@ -1,0 +1,8 @@
+using CQRS.Core.Queries;
+
+namespace {{ServiceName}}.Query.Domain.Queries
+{
+    public class Get{{EntityName}}sQuery : BaseQuery
+    {
+    }
+}

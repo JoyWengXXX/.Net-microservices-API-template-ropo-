@@ -1,0 +1,83 @@
+using System.Linq.Expressions;
+
+namespace {{ServiceName}}.Tests
+{
+    public class QueryHandlerTests
+    {
+        private readonly Mock<IRepository<MainDBConnectionManager>> _mockRepo;
+        private readonly {{ServiceName}}.Query.Infrastructure.Handlers.QueryHandler _sut;
+
+        public QueryHandlerTests()
+        {
+            _mockRepo = new Mock<IRepository<MainDBConnectionManager>>();
+            _sut = new {{ServiceName}}.Query.Infrastructure.Handlers.QueryHandler(_mockRepo.Object);
+        }
+
+        [Fact]
+        public async Task HandleAsync_Get{{EntityName}}sQuery_ReturnsTResultWithSuccessAndData()
+        {
+            // Arrange
+            var mockedData = new List<{{EntityName}}>
+            {
+                new {{EntityName}} { {{EntityId}} = "TEST_001" },
+                new {{EntityName}} { {{EntityId}} = "TEST_002" },
+            };
+            _mockRepo.Setup(x => x.GetListAsync(
+                It.IsAny<Expression<Func<{{EntityName}}, object>>>(),
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                null,
+                It.IsAny<IUnitOfWork>()))
+                .ReturnsAsync(mockedData);
+
+            // Act
+            var result = await _sut.HandleAsync(new Get{{EntityName}}sQuery());
+
+            // Assert
+            Assert.True(result.isSuccess);
+            Assert.Equal(mockedData, result.executionData);
+        }
+
+        [Fact]
+        public async Task HandleAsync_Get{{EntityName}}sQuery_WhenNoData_ThrowsAppException()
+        {
+            // Arrange
+            _mockRepo.Setup(x => x.GetListAsync(
+                It.IsAny<Expression<Func<{{EntityName}}, object>>>(),
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                null,
+                It.IsAny<IUnitOfWork>()))
+                .ReturnsAsync(new List<{{EntityName}}>());
+
+            // Act & Assert
+            await Assert.ThrowsAsync<Service.Common.Middleware.AppException>(
+                () => _sut.HandleAsync(new Get{{EntityName}}sQuery()));
+        }
+
+        [Fact]
+        public async Task HandleAsync_Get{{EntityName}}sQuery_VerifyRepositoryIsCalled()
+        {
+            // Arrange
+            var mockedData = new List<{{EntityName}}>
+            {
+                new {{EntityName}} { {{EntityId}} = "TEST_001" },
+            };
+            _mockRepo.Setup(x => x.GetListAsync(
+                It.IsAny<Expression<Func<{{EntityName}}, object>>>(),
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                null,
+                It.IsAny<IUnitOfWork>()))
+                .ReturnsAsync(mockedData);
+
+            // Act
+            await _sut.HandleAsync(new Get{{EntityName}}sQuery());
+
+            // Assert
+            _mockRepo.Verify(x => x.GetListAsync(
+                It.IsAny<Expression<Func<{{EntityName}}, object>>>(),
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                null,
+                It.IsAny<IUnitOfWork>()),
+                Times.Once);
+        }
+    }
+}

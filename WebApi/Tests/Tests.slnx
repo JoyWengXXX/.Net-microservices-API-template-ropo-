@@ -5,11 +5,7 @@
     <Platform Name="x86" />
   </Configurations>
   <Folder Name="/Tests/">
-    <Project Path="ConfigurationHelper.Test/ConfigurationHelper.Test.csproj" />
     <Project Path="ControllerService.Test/ControllerService.Tests.csproj" />
-    <Project Path="LogInService.Test/LogInService.Tests.csproj" />
-    <Project Path="RoleService.Test/RoleService.Tests.csproj" />
-    <Project Path="SignUpService.Test/SignUpService.Tests.csproj" />
   </Folder>
   <Folder Name="/Referenced Projects/">
     <Project Path="../CommonLibrary/CommonLibrary.csproj" />

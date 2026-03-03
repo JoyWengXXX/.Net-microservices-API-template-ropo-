@@ -23,11 +23,22 @@ namespace ControllerService.Query.Infrastructure.Handlers
             Expression<Func<Controller, object>> select = x => new { x.ControllerId, x.ControllerName, x.IsEnable };
             Expression<Func<Controller, bool>> where = x => 1 == 1;
             var pages = await repo.GetListAsync(select, where);
-            if (!pages.Any())
+            if (pages == null || !pages.Any())
             {
                 throw new AppException("Not result found");
             }
             return new TResult { isSuccess = true, executionData = pages.ToList() };
+        }
+
+        public async Task<TResult> HandleAsync(GetControllerByIdQuery query)
+        {
+            Expression<Func<Controller, object>> select = x => new { x.ControllerId, x.ControllerName, x.IsEnable };
+            var controller = await repo.GetFirstAsync(select, x => x.ControllerId == query.ControllerId);
+            if (controller == null)
+            {
+                throw new AppException("Controller not found");
+            }
+            return new TResult { isSuccess = true, executionData = controller };
         }
     }
 }

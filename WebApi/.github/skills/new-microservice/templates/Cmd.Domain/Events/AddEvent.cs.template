@@ -1,0 +1,12 @@
+using CQRS.Core.Events;
+
+namespace {{ServiceName}}.Cmd.Domain.Events
+{
+    public class Add{{EntityName}}Event : BaseEvent
+    {
+        public Add{{EntityName}}Event() : base(nameof(Add{{EntityName}}Event)) { }
+
+        public string {{entityId}} { get; set; }
+        // TODO: 加入其他新增時所需的欄位
+    }
+}

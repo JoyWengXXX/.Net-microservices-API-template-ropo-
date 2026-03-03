@@ -1,0 +1,10 @@
+using CQRS.Core.Commands;
+using {{ServiceName}}.Cmd.Domain.DTOs;
+
+namespace {{ServiceName}}.Cmd.API.Commands
+{
+    public class Add{{EntityName}}Command : BaseCommand
+    {
+        public Add{{EntityName}}DTO input { get; set; }
+    }
+}

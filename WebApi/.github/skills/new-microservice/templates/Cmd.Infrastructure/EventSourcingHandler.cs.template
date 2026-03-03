@@ -1,0 +1,71 @@
+using CQRS.Core.Domain;
+using CQRS.Core.Handlers;
+using CQRS.Core.Infrastructure;
+using Microsoft.Extensions.Configuration;
+using {{ServiceName}}.Cmd.Domain.Aggregates;
+using {{ServiceName}}.Cmd.Domain.Handlers;
+using Microsoft.AspNetCore.Http;
+
+namespace {{ServiceName}}.Cmd.Infrastructure.Handlers
+{
+    public class EventSourcingHandler : IEventSourcingHandler<{{EntityName}}Aggregate>
+    {
+        private readonly IEventStore _eventStore;
+        private readonly IEventHandler _eventHandler;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public EventSourcingHandler(
+            IEventStore eventStore,
+            IEventHandler eventHandler,
+            IHttpContextAccessor httpContextAccessor)
+        {
+            _eventStore = eventStore;
+            _eventHandler = eventHandler;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        public async Task<{{EntityName}}Aggregate> GetByIdAsync(Guid aggregateId, bool eventSourcingEnabled)
+        {
+            var aggregate = new {{EntityName}}Aggregate(_httpContextAccessor);
+            if (eventSourcingEnabled)
+            {
+                var events = await _eventStore.GetEventsAsync(aggregateId);
+                if (events == null || !events.Any()) return aggregate;
+                aggregate.ReplayEvents(events);
+                aggregate.Version = events.Select(x => x.Version).Last();
+            }
+            else
+            {
+                aggregate.Active = true;
+            }
+
+            return aggregate;
+        }
+
+        public async Task<TResult> SaveAsync(AggregateRoot aggregate, bool eventSourcingEnabled)
+        {
+            if (eventSourcingEnabled)
+            {
+                var result = await _eventStore.SaveEventsAsync(aggregate.GetUncommittedChanges(), aggregate.Version);
+                aggregate.MarkChangesAsCommitted();
+                return result;
+            }
+            else
+            {
+                foreach (var @event in aggregate.GetUncommittedChanges())
+                {
+                    var handlerMethod = _eventHandler.GetType().GetMethod("On", [@event.GetType()]);
+                    if (handlerMethod == null)
+                    {
+                        throw new InvalidOperationException($"No handler found for event type {@event.GetType().Name}");
+                    }
+                    var task = (Task<TResult>)handlerMethod.Invoke(_eventHandler, [@event])!;
+                    var result = await task;
+                    if (!result.isSuccess) return result;
+                }
+                aggregate.MarkChangesAsCommitted();
+                return new TResult { isSuccess = true };
+            }
+        }
+    }
+}

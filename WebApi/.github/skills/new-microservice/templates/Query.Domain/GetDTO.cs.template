@@ -1,0 +1,8 @@
+namespace {{ServiceName}}.Query.Domain.DTOs
+{
+    public class Get{{EntityName}}DTO
+    {
+        public string {{entityId}} { get; set; } = null!;
+        // TODO: 加入查詢回傳所需的欄位
+    }
+}

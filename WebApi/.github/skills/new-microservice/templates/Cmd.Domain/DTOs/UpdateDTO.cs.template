@@ -1,0 +1,11 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace {{ServiceName}}.Cmd.Domain.DTOs
+{
+    public class Update{{EntityName}}DTO
+    {
+        [Required]
+        public string {{entityId}} { get; set; }
+        // TODO: 加入更新所需的欄位
+    }
+}

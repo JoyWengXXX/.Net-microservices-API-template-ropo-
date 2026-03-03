@@ -1,0 +1,54 @@
+using AutoMapper;
+using CQRS.Core.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using {{ServiceName}}.Query.Domain.DTOs;
+using {{ServiceName}}.Query.Domain.Mappers;
+using {{ServiceName}}.Query.Domain.Queries;
+using Service.Common.Models.DTOs;
+
+namespace {{ServiceName}}.Query.API.Controllers
+{
+    [ApiController]
+    [Authorize(Roles = "{{AuthorizeRole}}")]
+    [Route("api/v1/[controller]")]
+    public class {{EntityName}}_QueryController : ControllerBase
+    {
+        private readonly IQueryDispatcher _queryDispatcher;
+        private readonly IMapper _mapper;
+
+        public {{EntityName}}_QueryController(IQueryDispatcher queryDispatcher)
+        {
+            _queryDispatcher = queryDispatcher;
+            var config = new MapperConfiguration(cfg => cfg.AddProfile<{{EntityName}}Profile>());
+            _mapper = config.CreateMapper();
+        }
+
+        [HttpGet("{{EntityName}}s")]
+        [ProducesResponseType(typeof(ResponseDTO), StatusCodes.Status200OK)]
+        public async Task<ActionResult> {{EntityName}}s()
+        {
+            var result = await _queryDispatcher.SendAsync(new Get{{EntityName}}sQuery());
+            return Ok(new ResponseDTO
+            {
+                isSuccess = true,
+                message = "Success",
+                result = _mapper.Map<List<Get{{EntityName}}DTO>>(result)
+            });
+        }
+
+        [HttpGet("{{EntityName}}")]
+        [ProducesResponseType(typeof(ResponseDTO), StatusCodes.Status200OK)]
+        public async Task<ActionResult> {{EntityName}}(string {{entityId}})
+        {
+            var result = await _queryDispatcher.SendAsync(new Get{{EntityName}}sQuery());
+            var items = (List<SystemMain.Entities.{{EntityName}}>)result.executionData;
+            return Ok(new ResponseDTO
+            {
+                isSuccess = true,
+                message = "Success",
+                result = _mapper.Map<Get{{EntityName}}DTO>(items.First(x => x.{{EntityId}} == {{entityId}}))
+            });
+        }
+    }
+}

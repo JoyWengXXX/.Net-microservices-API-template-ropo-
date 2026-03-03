@@ -1,0 +1,11 @@
+using CQRS.Core.Events;
+
+namespace {{ServiceName}}.Cmd.Domain.Events
+{
+    public class Disable{{EntityName}}Event : BaseEvent
+    {
+        public Disable{{EntityName}}Event() : base(nameof(Disable{{EntityName}}Event)) { }
+
+        public string {{entityId}} { get; set; }
+    }
+}

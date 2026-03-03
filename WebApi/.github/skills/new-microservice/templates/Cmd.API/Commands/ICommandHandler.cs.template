@@ -1,0 +1,11 @@
+using CQRS.Core.Infrastructure;
+
+namespace {{ServiceName}}.Cmd.API.Commands.Interfaces
+{
+    public interface ICommandHandler
+    {
+        Task<TResult> HandleAsync(Add{{EntityName}}Command command);
+        Task<TResult> HandleAsync(Update{{EntityName}}Command command);
+        Task<TResult> HandleAsync(Disable{{EntityName}}Command command);
+    }
+}

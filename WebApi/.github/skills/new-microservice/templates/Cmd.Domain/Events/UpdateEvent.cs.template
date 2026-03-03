@@ -1,0 +1,12 @@
+using CQRS.Core.Events;
+
+namespace {{ServiceName}}.Cmd.Domain.Events
+{
+    public class Update{{EntityName}}Event : BaseEvent
+    {
+        public Update{{EntityName}}Event() : base(nameof(Update{{EntityName}}Event)) { }
+
+        public string {{entityId}} { get; set; }
+        // TODO: 加入其他更新時所需的欄位
+    }
+}

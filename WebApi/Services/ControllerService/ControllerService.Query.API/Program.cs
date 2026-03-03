@@ -1,39 +1,45 @@
 using CQRS.Core.DefaultConcreteObjects.Dispatchers;
 using CQRS.Core.Infrastructure;
 using DataAccess;
+using ControllerService.Query.Domain.Mappers;
 using ControllerService.Query.Domain.Queries;
 using ControllerService.Query.Domain.Queries.Interfaces;
 using ControllerService.Query.Infrastructure.Handlers;
 using Service.Common.Filters;
 using Service.Common.Helpers;
 using Service.Common.Middleware;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 string serviceName = "ControllerService";
 
-//���UDbContext
+//注冊DbContext
 ServicesInjectionHelper.InjectDbContext(builder, null, serviceName, typeof(MainDBConnectionManager));
 
-// �]�wSerilog
+// 設定Serilog
 ServicesInjectionHelper.InitialzeSerilogSettings(builder, serviceName);
 
-//JWT�]�w
+//JWT設定
 ServicesInjectionHelper.InitializeApiServicesAndSecurity(builder);
 
-//���UDispatcher
+//注冊Dispatcher
 builder.Services.AddScoped<IQueryHandler, QueryHandler>();
-var queryHandler = builder.Services.BuildServiceProvider().GetRequiredService<IQueryHandler>();
-var pageDispatcher = new QueryDispatcher();
-pageDispatcher.RegisterHandler<GetControllersQuery>(queryHandler.HandleAsync);
-builder.Services.AddScoped<IQueryDispatcher>(_ => pageDispatcher);
+builder.Services.AddScoped<IQueryDispatcher>(sp =>
+{
+    var handler = sp.GetRequiredService<IQueryHandler>();
+    var dispatcher = new QueryDispatcher();
+    dispatcher.RegisterHandler<GetControllersQuery>(handler.HandleAsync);
+    dispatcher.RegisterHandler<GetControllerByIdQuery>(handler.HandleAsync);
+    return dispatcher;
+});
 
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
+    options.AddDefaultPolicy(policy =>
     {
-        builder
+        policy
             .AllowAnyOrigin()
             .AllowAnyMethod()
             .AllowAnyHeader();
@@ -42,13 +48,21 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+        options.IncludeXmlComments(xmlPath);
+});
+builder.Services.AddAutoMapper(typeof(ControllerProfile));
 
-//���UFilter
+//注冊Filter
 builder.Services.AddTransient<ActionRoleFilter>();
 
 var app = builder.Build();
 
-//���Umiddleware
+//注冊middleware
 app.UseMiddleware<ErrorHandler>();
 app.UseMiddleware<AuthorizationHandler>();
 

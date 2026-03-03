@@ -1,81 +1,217 @@
 using System.Linq.Expressions;
 using ControllerService.Cmd.Domain.Events;
+using InfraEventHandler = ControllerService.Cmd.Infrastructure.Handlers.EventHandler;
 
-namespace ControllerService.Tests
+namespace ControllerService.Tests;
+
+public class EventHandlerTests
 {
-    public class EventHandlerTests
+    private readonly Mock<IRepository<MainDBConnectionManager>> _mockRepo;
+    private readonly Mock<IUnitOfWork> _mockUoW;
+    private readonly InfraEventHandler _sut;
+
+    public EventHandlerTests()
     {
-        private readonly Mock<IRepository<MainDBConnectionManager>> mockRepo;
-        private readonly Cmd.Infrastructure.Handlers.EventHandler _eventHandler;
+        _mockRepo = new Mock<IRepository<MainDBConnectionManager>>();
+        _mockUoW = new Mock<IUnitOfWork>();
+        _mockRepo.Setup(x => x.CreateUnitOfWork()).Returns(_mockUoW.Object);
+        _sut = new InfraEventHandler(_mockRepo.Object);
+    }
 
-        public EventHandlerTests()
+    // ── On(AddControllerEvent) ────────────────────────────────────────────
+
+    [Fact]
+    public async Task On_AddControllerEvent_ReturnsTResultWithSuccess()
+    {
+        // Arrange
+        var @event = new AddControllerEvent
         {
-            mockRepo = new Mock<IRepository<MainDBConnectionManager>>();
-            _eventHandler = new Cmd.Infrastructure.Handlers.EventHandler(mockRepo.Object);
-        }
+            controllerId = "CTRL_001",
+            controllerName = "TestController"
+        };
+        _mockRepo.Setup(x => x.CreateAsync(
+            It.IsAny<Controller>(),
+            It.IsAny<IUnitOfWork>()))
+            .ReturnsAsync(1);
 
-        [Fact]
-        public async Task On_AddControllerEvent_ReturnsTResultWithSuccess()
+        // Act
+        var result = await _sut.On(@event);
+
+        // Assert
+        Assert.True(result.isSuccess);
+        _mockRepo.Verify(x => x.CreateAsync(
+            It.Is<Controller>(c =>
+                c.ControllerId == "CTRL_001" &&
+                c.ControllerName == "TestController" &&
+                c.IsEnable == true),
+            It.IsAny<IUnitOfWork>()), Times.Once);
+    }
+
+    // ── On(UpdateControllerEvent) ─────────────────────────────────────────
+
+    [Fact]
+    public async Task On_UpdateControllerEvent_WhenControllerExists_ReturnsTResultWithSuccess()
+    {
+        // Arrange
+        var @event = new UpdateControllerEvent
         {
-            // Arrange
-            var @event = new AddControllerEvent
-            {
-                controllerName = "testController",
-            };
-            mockRepo.Setup(x => x.CreateAsync(It.IsAny<Controller>(), It.IsAny<IUnitOfWork>())).ReturnsAsync(1);
+            controllerId = "CTRL_001",
+            controllerName = "UpdatedName"
+        };
+        var existing = new Controller { ControllerId = "CTRL_001" };
+        _mockRepo.Setup(x => x.GetFirstAsync(
+            It.IsAny<Expression<Func<Controller, object>>>(),
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            null,
+            It.IsAny<IUnitOfWork>()))
+            .ReturnsAsync(existing);
+        _mockRepo.Setup(x => x.UpdateAsync(
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            It.IsAny<IUnitOfWork>()))
+            .ReturnsAsync(1);
 
-            // Act
-            var result = await _eventHandler.On(@event);
+        // Act
+        var result = await _sut.On(@event);
 
-            // Assert
-            Assert.True(result.isSuccess);
-        }
+        // Assert
+        Assert.True(result.isSuccess);
+        _mockUoW.Verify(x => x.Begin(), Times.Once);
+        _mockUoW.Verify(x => x.Commit(), Times.Once);
+        _mockUoW.Verify(x => x.Rollback(), Times.Never);
+        _mockRepo.Verify(x => x.UpdateAsync(
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            It.IsAny<IUnitOfWork>()), Times.Once);
+    }
 
-        [Fact]
-        public async Task On_UpdateControllerEvent_ReturnsTResultWithSuccess()
+    [Fact]
+    public async Task On_UpdateControllerEvent_WhenControllerNotFound_ThrowsAppException()
+    {
+        // Arrange
+        var @event = new UpdateControllerEvent
         {
-            // Arrange
-            var @event = new UpdateControllerEvent
-            {
-                controllerId = "TEST_Controller",
-                controllerName = "testController",
-            };
-            Controller mockedControllerObject = new Controller
-            {
-                ControllerId = @event.controllerId,
-                ControllerName = "testController",
-            };
-            mockRepo.Setup(x => x.GetFirstAsync(It.IsAny<Expression<Func<Controller, object>>>(), It.IsAny<Expression<Func<Controller, bool>>>(), null, It.IsAny<IUnitOfWork>())).ReturnsAsync(mockedControllerObject);
-            mockRepo.Setup(x => x.UpdateAsync(It.IsAny<Expression<Func<Controller, bool>>>(), It.IsAny<Expression<Func<Controller, bool>>>(), It.IsAny<IUnitOfWork>())).Returns(Task.FromResult(1));
+            controllerId = "NON_EXISTENT",
+            controllerName = "X"
+        };
+        _mockRepo.Setup(x => x.GetFirstAsync(
+            It.IsAny<Expression<Func<Controller, object>>>(),
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            null,
+            It.IsAny<IUnitOfWork>()))
+            .ReturnsAsync((Controller)null);
 
-            // Act
-            var result = await _eventHandler.On(@event);
+        // Act & Assert
+        await Assert.ThrowsAsync<AppException>(() => _sut.On(@event));
+        _mockUoW.Verify(x => x.Rollback(), Times.Once);
+        _mockUoW.Verify(x => x.Commit(), Times.Never);
+        _mockRepo.Verify(x => x.UpdateAsync(
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            It.IsAny<IUnitOfWork>()), Times.Never);
+    }
 
-            // Assert
-            Assert.True(result.isSuccess);
-        }
+    [Fact]
+    public async Task On_UpdateControllerEvent_WhenUpdateFails_CallsRollbackAndRethrows()
+    {
+        // Arrange
+        var @event = new UpdateControllerEvent { controllerId = "CTRL_001", controllerName = "X" };
+        var existing = new Controller { ControllerId = "CTRL_001" };
+        _mockRepo.Setup(x => x.GetFirstAsync(
+            It.IsAny<Expression<Func<Controller, object>>>(),
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            null,
+            It.IsAny<IUnitOfWork>()))
+            .ReturnsAsync(existing);
+        _mockRepo.Setup(x => x.UpdateAsync(
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            It.IsAny<IUnitOfWork>()))
+            .ThrowsAsync(new Exception("DB error"));
 
-        [Fact]
-        public async Task On_DisableControllerEvent_ReturnsTResultWithSuccess()
-        {
-            // Arrange
-            var @event = new DisableControllerEvent
-            {
-                controllerId = "TEST_Controller",
-            };
-            Controller mockedControllerObject = new Controller
-            {
-                ControllerId = @event.controllerId,
-            };
-            mockRepo.Setup(x => x.GetFirstAsync(It.IsAny<Expression<Func<Controller, object>>>(), It.IsAny<Expression<Func<Controller, bool>>>(), null, It.IsAny<IUnitOfWork>())).ReturnsAsync(mockedControllerObject);
-            mockRepo.Setup(x => x.DeleteAsync(It.IsAny<Expression<Func<Controller, bool>>>(), It.IsAny<IUnitOfWork>())).Returns(Task.FromResult(1));
+        // Act & Assert
+        await Assert.ThrowsAsync<Exception>(() => _sut.On(@event));
+        _mockUoW.Verify(x => x.Rollback(), Times.Once);
+        _mockUoW.Verify(x => x.Commit(), Times.Never);
+    }
 
-            // Act
-            var result = await _eventHandler.On(@event);
+    // ── On(DisableControllerEvent) ────────────────────────────────────────
 
-            // Assert
-            Assert.True(result.isSuccess);
-        }
+    [Fact]
+    public async Task On_DisableControllerEvent_WhenControllerExists_ReturnsTResultWithSuccess()
+    {
+        // Arrange
+        var @event = new DisableControllerEvent { controllerId = "CTRL_001" };
+        var existing = new Controller { ControllerId = "CTRL_001" };
+        _mockRepo.Setup(x => x.GetFirstAsync(
+            It.IsAny<Expression<Func<Controller, object>>>(),
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            null,
+            It.IsAny<IUnitOfWork>()))
+            .ReturnsAsync(existing);
+        _mockRepo.Setup(x => x.UpdateAsync(
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            It.IsAny<IUnitOfWork>()))
+            .ReturnsAsync(1);
+
+        // Act
+        var result = await _sut.On(@event);
+
+        // Assert
+        Assert.True(result.isSuccess);
+        _mockUoW.Verify(x => x.Begin(), Times.Once);
+        _mockUoW.Verify(x => x.Commit(), Times.Once);
+        _mockUoW.Verify(x => x.Rollback(), Times.Never);
+        _mockRepo.Verify(x => x.UpdateAsync(
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            It.IsAny<IUnitOfWork>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task On_DisableControllerEvent_WhenControllerNotFound_ThrowsAppException()
+    {
+        // Arrange
+        var @event = new DisableControllerEvent { controllerId = "NON_EXISTENT" };
+        _mockRepo.Setup(x => x.GetFirstAsync(
+            It.IsAny<Expression<Func<Controller, object>>>(),
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            null,
+            It.IsAny<IUnitOfWork>()))
+            .ReturnsAsync((Controller)null);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<AppException>(() => _sut.On(@event));
+        _mockUoW.Verify(x => x.Rollback(), Times.Once);
+        _mockUoW.Verify(x => x.Commit(), Times.Never);
+        _mockRepo.Verify(x => x.UpdateAsync(
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            It.IsAny<IUnitOfWork>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task On_DisableControllerEvent_WhenUpdateFails_CallsRollbackAndRethrows()
+    {
+        // Arrange
+        var @event = new DisableControllerEvent { controllerId = "CTRL_001" };
+        var existing = new Controller { ControllerId = "CTRL_001" };
+        _mockRepo.Setup(x => x.GetFirstAsync(
+            It.IsAny<Expression<Func<Controller, object>>>(),
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            null,
+            It.IsAny<IUnitOfWork>()))
+            .ReturnsAsync(existing);
+        _mockRepo.Setup(x => x.UpdateAsync(
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            It.IsAny<Expression<Func<Controller, bool>>>(),
+            It.IsAny<IUnitOfWork>()))
+            .ThrowsAsync(new Exception("DB error"));
+
+        // Act & Assert
+        await Assert.ThrowsAsync<Exception>(() => _sut.On(@event));
+        _mockUoW.Verify(x => x.Rollback(), Times.Once);
+        _mockUoW.Verify(x => x.Commit(), Times.Never);
     }
 }
-

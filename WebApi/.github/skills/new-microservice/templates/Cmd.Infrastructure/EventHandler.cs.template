@@ -1,0 +1,91 @@
+using CQRS.Core.Infrastructure;
+using DataAccess.Interfaces;
+using DataAccess;
+using SystemMain.Entities;
+using {{ServiceName}}.Cmd.Domain.Handlers;
+using Service.Common.Middleware;
+using System.Linq.Expressions;
+using {{ServiceName}}.Cmd.Domain.Events;
+
+namespace {{ServiceName}}.Cmd.Infrastructure.Handlers
+{
+    public class EventHandler : IEventHandler
+    {
+        private readonly IRepository<MainDBConnectionManager> _repo;
+
+        public EventHandler(IRepository<MainDBConnectionManager> repo)
+        {
+            _repo = repo;
+        }
+
+        public async Task<TResult> On(Add{{EntityName}}Event @event)
+        {
+            await _repo.CreateAsync(new {{EntityName}}
+            {
+                {{EntityId}} = @event.{{entityId}},
+                // TODO: 補齊其他欄位對應
+                IsEnable = true,
+                CreateDate = DateTime.UtcNow,
+            });
+
+            return new TResult { isSuccess = true };
+        }
+
+        public async Task<TResult> On(Update{{EntityName}}Event @event)
+        {
+            using var uow = _repo.CreateUnitOfWork();
+            Expression<Func<{{EntityName}}, object>> select = x => new { x.{{EntityId}} };
+            Expression<Func<{{EntityName}}, bool>> where = x => x.{{EntityId}} == @event.{{entityId}};
+            var entity = await _repo.GetFirstAsync(select, where, unitOfWork: uow);
+            if (entity == null)
+            {
+                throw new AppException("{{EntityName}} not found!");
+            }
+
+            uow.Begin();
+            try
+            {
+                // TODO: 補齊更新欄位對應
+                Expression<Func<{{EntityName}}, bool>> update = x => x.{{EntityId}} == entity.{{EntityId}};
+                Expression<Func<{{EntityName}}, bool>> whereUpdate = x => x.{{EntityId}} == entity.{{EntityId}};
+                await _repo.UpdateAsync(update, whereUpdate, uow);
+                uow.Commit();
+            }
+            catch
+            {
+                uow.Rollback();
+                throw;
+            }
+
+            return new TResult { isSuccess = true };
+        }
+
+        public async Task<TResult> On(Disable{{EntityName}}Event @event)
+        {
+            using var uow = _repo.CreateUnitOfWork();
+            Expression<Func<{{EntityName}}, object>> select = x => new { x.{{EntityId}} };
+            Expression<Func<{{EntityName}}, bool>> where = x => x.{{EntityId}} == @event.{{entityId}};
+            var entity = await _repo.GetFirstAsync(select, where, unitOfWork: uow);
+            if (entity == null)
+            {
+                throw new AppException("{{EntityName}} not found!");
+            }
+
+            uow.Begin();
+            try
+            {
+                Expression<Func<{{EntityName}}, bool>> update = x => x.IsEnable == false;
+                Expression<Func<{{EntityName}}, bool>> whereDisable = x => x.{{EntityId}} == entity.{{EntityId}};
+                await _repo.UpdateAsync(update, whereDisable, uow);
+                uow.Commit();
+            }
+            catch
+            {
+                uow.Rollback();
+                throw;
+            }
+
+            return new TResult { isSuccess = true };
+        }
+    }
+}

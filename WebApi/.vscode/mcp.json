@@ -1,0 +1,26 @@
+{
+  "inputs": [
+    {
+      "id": "postgres-connection-string",
+      "description": "PostgreSQL connection string (e.g., postgresql://user:password@localhost:5432/dbname)",
+      "type": "promptString",
+      "password": true
+    }
+  ],
+  "servers": {
+    "postgres": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "${input:postgres-connection-string}"
+      ]
+    },
+    "fetch": {
+      "command": "C:\\Users\\user\\.local\\bin\\uvx.exe",
+      "args": [
+        "mcp-server-fetch"
+      ]
+    }
+  }
+}

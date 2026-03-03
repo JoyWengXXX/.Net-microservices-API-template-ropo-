@@ -1,0 +1,9 @@
+using CQRS.Core.Commands;
+
+namespace {{ServiceName}}.Cmd.API.Commands
+{
+    public class Disable{{EntityName}}Command : BaseCommand
+    {
+        public string {{EntityId}} { get; set; }
+    }
+}

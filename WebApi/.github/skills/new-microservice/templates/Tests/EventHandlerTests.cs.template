@@ -1,0 +1,345 @@
+using System.Linq.Expressions;
+using {{ServiceName}}.Cmd.Domain.Events;
+using Service.Common.Middleware;
+
+namespace {{ServiceName}}.Tests
+{
+    public class EventHandlerTests
+    {
+        private readonly Mock<IRepository<MainDBConnectionManager>> _mockRepo;
+        private readonly Mock<IUnitOfWork> _mockUoW;
+        private readonly {{ServiceName}}.Cmd.Infrastructure.Handlers.EventHandler _sut;
+
+        public EventHandlerTests()
+        {
+            _mockRepo = new Mock<IRepository<MainDBConnectionManager>>();
+            _mockUoW  = new Mock<IUnitOfWork>();
+            // Update / Disable 的 On() 都會呼叫 CreateUnitOfWork()，必須 Mock 否則 NullReferenceException
+            _mockRepo.Setup(x => x.CreateUnitOfWork()).Returns(_mockUoW.Object);
+            _sut = new {{ServiceName}}.Cmd.Infrastructure.Handlers.EventHandler(_mockRepo.Object);
+        }
+
+        // ── Add ──────────────────────────────────────────────────────────────
+
+        [Fact]
+        public async Task On_Add{{EntityName}}Event_ReturnsTResultWithSuccess()
+        {
+            // Arrange
+            var @event = new Add{{EntityName}}Event
+            {
+                {{entityId}} = "TEST_{{EntityName}}",
+            };
+            _mockRepo.Setup(x => x.CreateAsync(
+                It.IsAny<{{EntityName}}>(),
+                It.IsAny<IUnitOfWork>()))
+                .ReturnsAsync(1);
+
+            // Act
+            var result = await _sut.On(@event);
+
+            // Assert
+            Assert.True(result.isSuccess);
+        }
+
+        [Fact]
+        public async Task On_Add{{EntityName}}Event_VerifyCreateCalledOnce()
+        {
+            // Arrange
+            var @event = new Add{{EntityName}}Event { {{entityId}} = "TEST_{{EntityName}}" };
+            _mockRepo.Setup(x => x.CreateAsync(It.IsAny<{{EntityName}}>(), It.IsAny<IUnitOfWork>()))
+                     .ReturnsAsync(1);
+
+            // Act
+            await _sut.On(@event);
+
+            // Assert
+            _mockRepo.Verify(x => x.CreateAsync(
+                It.IsAny<{{EntityName}}>(),
+                It.IsAny<IUnitOfWork>()),
+                Times.Once);
+        }
+
+        // ── Update ───────────────────────────────────────────────────────────
+
+        [Fact]
+        public async Task On_Update{{EntityName}}Event_ReturnsTResultWithSuccess()
+        {
+            // Arrange
+            var @event = new Update{{EntityName}}Event
+            {
+                {{entityId}} = "TEST_{{EntityName}}",
+            };
+            var mocked{{EntityName}} = new {{EntityName}}
+            {
+                {{EntityId}} = @event.{{entityId}},
+            };
+            _mockRepo.Setup(x => x.GetFirstAsync(
+                It.IsAny<Expression<Func<{{EntityName}}, object>>>(),
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                null,
+                It.IsAny<IUnitOfWork>()))
+                .ReturnsAsync(mocked{{EntityName}});
+            _mockRepo.Setup(x => x.UpdateAsync(
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                It.IsAny<IUnitOfWork>()))
+                .Returns(Task.FromResult(1));
+
+            // Act
+            var result = await _sut.On(@event);
+
+            // Assert
+            Assert.True(result.isSuccess);
+        }
+
+        [Fact]
+        public async Task On_Update{{EntityName}}Event_WhenEntityNotFound_ThrowsAppException()
+        {
+            // Arrange
+            var @event = new Update{{EntityName}}Event
+            {
+                {{entityId}} = "NON_EXISTENT",
+            };
+            _mockRepo.Setup(x => x.GetFirstAsync(
+                It.IsAny<Expression<Func<{{EntityName}}, object>>>(),
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                null,
+                It.IsAny<IUnitOfWork>()))
+                .ReturnsAsync(({{EntityName}})null);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<AppException>(() => _sut.On(@event));
+        }
+
+        [Fact]
+        public async Task On_Update{{EntityName}}Event_VerifyUpdateCalledOnce()
+        {
+            // Arrange
+            var @event = new Update{{EntityName}}Event { {{entityId}} = "TEST_{{EntityName}}" };
+            var mocked{{EntityName}} = new {{EntityName}} { {{EntityId}} = @event.{{entityId}} };
+            _mockRepo.Setup(x => x.GetFirstAsync(
+                It.IsAny<Expression<Func<{{EntityName}}, object>>>(),
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                null, It.IsAny<IUnitOfWork>()))
+                .ReturnsAsync(mocked{{EntityName}});
+            _mockRepo.Setup(x => x.UpdateAsync(
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                It.IsAny<IUnitOfWork>()))
+                .Returns(Task.FromResult(1));
+
+            // Act
+            await _sut.On(@event);
+
+            // Assert
+            _mockRepo.Verify(x => x.UpdateAsync(
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                It.IsAny<IUnitOfWork>()),
+                Times.Once);
+        }
+
+        // ── Disable ──────────────────────────────────────────────────────────
+
+        [Fact]
+        public async Task On_Disable{{EntityName}}Event_ReturnsTResultWithSuccess()
+        {
+            // Arrange
+            var @event = new Disable{{EntityName}}Event
+            {
+                {{entityId}} = "TEST_{{EntityName}}",
+            };
+            var mocked{{EntityName}} = new {{EntityName}}
+            {
+                {{EntityId}} = @event.{{entityId}},
+            };
+            _mockRepo.Setup(x => x.GetFirstAsync(
+                It.IsAny<Expression<Func<{{EntityName}}, object>>>(),
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                null,
+                It.IsAny<IUnitOfWork>()))
+                .ReturnsAsync(mocked{{EntityName}});
+            _mockRepo.Setup(x => x.UpdateAsync(
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                It.IsAny<IUnitOfWork>()))
+                .Returns(Task.FromResult(1));
+
+            // Act
+            var result = await _sut.On(@event);
+
+            // Assert
+            Assert.True(result.isSuccess);
+        }
+
+        [Fact]
+        public async Task On_Disable{{EntityName}}Event_WhenEntityNotFound_ThrowsAppException()
+        {
+            // Arrange
+            var @event = new Disable{{EntityName}}Event
+            {
+                {{entityId}} = "NON_EXISTENT",
+            };
+            _mockRepo.Setup(x => x.GetFirstAsync(
+                It.IsAny<Expression<Func<{{EntityName}}, object>>>(),
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                null,
+                It.IsAny<IUnitOfWork>()))
+                .ReturnsAsync(({{EntityName}})null);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<AppException>(() => _sut.On(@event));
+        }
+
+        [Fact]
+        public async Task On_Disable{{EntityName}}Event_VerifyUpdateCalledOnce()
+        {
+            // Arrange
+            var @event = new Disable{{EntityName}}Event { {{entityId}} = "TEST_{{EntityName}}" };
+            var mocked{{EntityName}} = new {{EntityName}} { {{EntityId}} = @event.{{entityId}} };
+            _mockRepo.Setup(x => x.GetFirstAsync(
+                It.IsAny<Expression<Func<{{EntityName}}, object>>>(),
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                null, It.IsAny<IUnitOfWork>()))
+                .ReturnsAsync(mocked{{EntityName}});
+            _mockRepo.Setup(x => x.UpdateAsync(
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                It.IsAny<IUnitOfWork>()))
+                .Returns(Task.FromResult(1));
+
+            // Act
+            await _sut.On(@event);
+
+            // Assert
+            _mockRepo.Verify(x => x.UpdateAsync(
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                It.IsAny<IUnitOfWork>()),
+                Times.Once);
+        }
+    }
+}
+
+
+        [Fact]
+        public async Task On_Add{{EntityName}}Event_ReturnsTResultWithSuccess()
+        {
+            // Arrange
+            var @event = new Add{{EntityName}}Event
+            {
+                {{entityId}} = "TEST_{{EntityName}}",
+            };
+            _mockRepo.Setup(x => x.CreateAsync(
+                It.IsAny<{{EntityName}}>(),
+                It.IsAny<IUnitOfWork>()))
+                .ReturnsAsync(1);
+
+            // Act
+            var result = await _sut.On(@event);
+
+            // Assert
+            Assert.True(result.isSuccess);
+        }
+
+        [Fact]
+        public async Task On_Update{{EntityName}}Event_ReturnsTResultWithSuccess()
+        {
+            // Arrange
+            var @event = new Update{{EntityName}}Event
+            {
+                {{entityId}} = "TEST_{{EntityName}}",
+            };
+            var mocked{{EntityName}} = new {{EntityName}}
+            {
+                {{EntityId}} = @event.{{entityId}},
+            };
+            _mockRepo.Setup(x => x.GetFirstAsync(
+                It.IsAny<Expression<Func<{{EntityName}}, object>>>(),
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                null,
+                It.IsAny<IUnitOfWork>()))
+                .ReturnsAsync(mocked{{EntityName}});
+            _mockRepo.Setup(x => x.UpdateAsync(
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                It.IsAny<IUnitOfWork>()))
+                .Returns(Task.FromResult(1));
+
+            // Act
+            var result = await _sut.On(@event);
+
+            // Assert
+            Assert.True(result.isSuccess);
+        }
+
+        [Fact]
+        public async Task On_Update{{EntityName}}Event_WhenEntityNotFound_ThrowsAppException()
+        {
+            // Arrange
+            var @event = new Update{{EntityName}}Event
+            {
+                {{entityId}} = "NON_EXISTENT",
+            };
+            _mockRepo.Setup(x => x.GetFirstAsync(
+                It.IsAny<Expression<Func<{{EntityName}}, object>>>(),
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                null,
+                It.IsAny<IUnitOfWork>()))
+                .ReturnsAsync(({{EntityName}})null);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<Service.Common.Middleware.AppException>(() => _sut.On(@event));
+        }
+
+        [Fact]
+        public async Task On_Disable{{EntityName}}Event_ReturnsTResultWithSuccess()
+        {
+            // Arrange
+            var @event = new Disable{{EntityName}}Event
+            {
+                {{entityId}} = "TEST_{{EntityName}}",
+            };
+            var mocked{{EntityName}} = new {{EntityName}}
+            {
+                {{EntityId}} = @event.{{entityId}},
+            };
+            _mockRepo.Setup(x => x.GetFirstAsync(
+                It.IsAny<Expression<Func<{{EntityName}}, object>>>(),
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                null,
+                It.IsAny<IUnitOfWork>()))
+                .ReturnsAsync(mocked{{EntityName}});
+            _mockRepo.Setup(x => x.UpdateAsync(
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                It.IsAny<IUnitOfWork>()))
+                .Returns(Task.FromResult(1));
+
+            // Act
+            var result = await _sut.On(@event);
+
+            // Assert
+            Assert.True(result.isSuccess);
+        }
+
+        [Fact]
+        public async Task On_Disable{{EntityName}}Event_WhenEntityNotFound_ThrowsAppException()
+        {
+            // Arrange
+            var @event = new Disable{{EntityName}}Event
+            {
+                {{entityId}} = "NON_EXISTENT",
+            };
+            _mockRepo.Setup(x => x.GetFirstAsync(
+                It.IsAny<Expression<Func<{{EntityName}}, object>>>(),
+                It.IsAny<Expression<Func<{{EntityName}}, bool>>>(),
+                null,
+                It.IsAny<IUnitOfWork>()))
+                .ReturnsAsync(({{EntityName}})null);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<Service.Common.Middleware.AppException>(() => _sut.On(@event));
+        }
+    }
+}

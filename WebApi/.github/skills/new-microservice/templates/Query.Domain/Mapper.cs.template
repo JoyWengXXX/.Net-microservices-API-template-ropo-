@@ -1,0 +1,16 @@
+using AutoMapper;
+using SystemMain.Entities;
+using {{ServiceName}}.Query.Domain.DTOs;
+
+namespace {{ServiceName}}.Query.Domain.Mappers
+{
+    public class {{EntityName}}Profile : Profile
+    {
+        public {{EntityName}}Profile()
+        {
+            CreateMap<{{EntityName}}, Get{{EntityName}}DTO>()
+                .ForMember(x => x.{{entityId}}, y => y.MapFrom(o => o.{{EntityId}}));
+                // TODO: 補齊其他欄位對應
+        }
+    }
+}

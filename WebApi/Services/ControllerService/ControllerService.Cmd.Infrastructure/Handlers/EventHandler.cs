@@ -34,16 +34,17 @@ namespace ControllerService.Cmd.Infrastructure.Handlers
         public async Task<TResult> On(UpdateControllerEvent @event)
         {
             using var mainUOW = _repo.CreateUnitOfWork();
-            Expression<Func<Controller, object>> select = x => new { x.ControllerId };
-            Expression<Func<Controller, bool>> where1 = x => x.ControllerId == @event.controllerId;
-            var controller = await _repo.GetFirstAsync(select, where1, unitOfWork: mainUOW);
-            if (controller == null)
-            {
-                throw new AppException("Not found controller!");
-            }
             mainUOW.Begin();
             try
             {
+                Expression<Func<Controller, object>> select = x => new { x.ControllerId };
+                Expression<Func<Controller, bool>> where1 = x => x.ControllerId == @event.controllerId;
+                var controller = await _repo.GetFirstAsync(select, where1, unitOfWork: mainUOW);
+                if (controller == null)
+                {
+                    throw new AppException("Not found controller!");
+                }
+
                 Expression<Func<Controller, bool>> input = x => x.ControllerName == @event.controllerName;
                 Expression<Func<Controller, bool>> where2 = x => x.ControllerId == controller.ControllerId;
                 await _repo.UpdateAsync(input, where2, mainUOW);
@@ -61,16 +62,17 @@ namespace ControllerService.Cmd.Infrastructure.Handlers
         public async Task<TResult> On(DisableControllerEvent @event)
         {
             using var mainUOW = _repo.CreateUnitOfWork();
-            Expression<Func<Controller, object>> select = x => new { x.ControllerId };
-            Expression<Func<Controller, bool>> where1 = x => x.ControllerId == @event.controllerId;
-            var controller = await _repo.GetFirstAsync(select, where1, unitOfWork: mainUOW);
-            if (controller == null)
-            {
-                throw new AppException("Not found controller!");
-            }
             mainUOW.Begin();
             try
             {
+                Expression<Func<Controller, object>> select = x => new { x.ControllerId };
+                Expression<Func<Controller, bool>> where1 = x => x.ControllerId == @event.controllerId;
+                var controller = await _repo.GetFirstAsync(select, where1, unitOfWork: mainUOW);
+                if (controller == null)
+                {
+                    throw new AppException("Not found controller!");
+                }
+
                 Expression<Func<Controller, bool>> input = x => x.IsEnable == false;
                 Expression<Func<Controller, bool>> where2 = x => x.ControllerId == controller.ControllerId;
                 await _repo.UpdateAsync(input, where2, mainUOW);

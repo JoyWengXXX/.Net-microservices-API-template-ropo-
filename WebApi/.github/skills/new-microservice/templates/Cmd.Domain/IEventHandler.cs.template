@@ -1,0 +1,12 @@
+using {{ServiceName}}.Cmd.Domain.Events;
+using CQRS.Core.Infrastructure;
+
+namespace {{ServiceName}}.Cmd.Domain.Handlers
+{
+    public interface IEventHandler
+    {
+        Task<TResult> On(Add{{EntityName}}Event @event);
+        Task<TResult> On(Update{{EntityName}}Event @event);
+        Task<TResult> On(Disable{{EntityName}}Event @event);
+    }
+}

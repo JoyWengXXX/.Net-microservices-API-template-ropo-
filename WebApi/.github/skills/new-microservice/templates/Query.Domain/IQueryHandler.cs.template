@@ -1,0 +1,9 @@
+using CQRS.Core.Infrastructure;
+
+namespace {{ServiceName}}.Query.Domain.Queries.Interfaces
+{
+    public interface IQueryHandler
+    {
+        Task<TResult> HandleAsync(Get{{EntityName}}sQuery query);
+    }
+}
