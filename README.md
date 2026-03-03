@@ -1,103 +1,217 @@
 # .NET 微服務 + 事件溯源模板
 
-這是一個以 .NET 為核心的微服務模板，內建 API Gateway、CQRS 與事件溯源基礎設計，目標是提供一個可快速複製的專案骨架，包含常見服務切分、共用元件、測試結構與 Docker Compose 配置。
+以 **.NET 9.0** 為核心的微服務架構模板，內建 API Gateway、CQRS 與事件溯源設計，提供可快速複製的專案骨架，涵蓋業務服務切分、共用元件、測試結構與 Docker Compose 完整配置。
 
 ## 專案定位
 
-- 提供微服務 + CQRS + 事件溯源的專案起手式
-- 以 API Gateway 統一路由與限流
-- 服務依職責切分（登入、註冊、角色權限、控制台等）
-- 共享共通元件（Helper、Common Library、共享模型）
+- 微服務 + CQRS + 事件溯源的生產就緒起手式
+- API Gateway 統一路由、快取、CORS 與速率限制
+- 服務依業務域切分，每個域獨立 CMD / Query 專案
+- 共享基礎設施（JWT、Serilog、Feature Flag、gRPC）
+- 集中式套件版本管理（`Directory.Packages.props`）
 
 ## 架構概覽
 
-- **API Gateway**：`GateWay` 使用 Ocelot，支援路由、快取、CORS、Forwarded Headers 與 Rate Limiter。
-- **CQRS / Event Sourcing Core**：`CQRS.Core` 放置事件與指令相關抽象層與基礎型別。
-- **共用函式庫**：`CommonLibrary` 提供跨服務可共用的 Helper / Extension。
-- **資料存取**：`DataAccess` 統一 DB 連線與 Repository、Unit of Work 的基礎抽象。
-- **服務專案**：`Services/*` 以不同業務域拆分 CMD/QUERY 專案。
-- **測試專案**：`Tests/*` 統一測試規範與 xUnit Runner 設定。
+```
+Client
+  └─► GateWay (Ocelot, port 80/443)
+        ├─► ControllerService.Cmd  (5126)
+        ├─► ControllerService.Query (5044)
+        ├─► LogInService.Cmd       (5246)
+        ├─► SignUpService.Cmd      (5215)
+        ├─► SignUpService.Query    (5289)
+        ├─► RoleService.Cmd        (5121)
+        ├─► RoleService.Query      (5128)
+        ├─► RolePermissionService.Cmd   (5114)
+        └─► RolePermissionService.Query (5256)
+```
 
-## 目錄結構（WebApi）
+## 目錄結構（WebApi/）
 
-- `GateWay/`：API Gateway（Ocelot）
-- `CQRS.Core/`：事件溯源與 CQRS 核心抽象
-- `CommonLibrary/`：共用 Helpers / Extensions
-- `DataAccess/`：資料庫連線與倉儲/工作單元基礎
-- `Services/`：各微服務主體
-- `Tests/`：測試專案與測試規範
+```
+WebApi/
+├── GateWay/                  # API Gateway（Ocelot 24）
+├── CQRS.Core/                # 事件溯源 & CQRS 核心抽象
+├── CommonLibrary/            # 跨服務共用 Helpers / Extensions
+├── DataAccess/               # DB 連線與 Repository / UoW 抽象
+├── DBContexts/SystemMain/    # EF Core DbContext（SQL Server + Event Sourcing DB）
+├── Services/                 # 各業務微服務（見下方服務清單）
+├── Tests/                    # xUnit 測試專案
+├── Directory.Build.props     # 全域專案屬性（net9.0）
+├── Directory.Packages.props  # 集中式 NuGet 版本管理
+├── docker-compose.yml
+└── SystemMain_WebApi.slnx
+```
 
-## 服務清單（Services）
+**服務清單（`Services/`）**
 
-以下為已建立的服務範例（依資料夾名稱）：
+每個業務服務依需求拆分為 `{Service}.Cmd` / `{Service}.Query` 兩側，各含 `API`、`Domain`、`Infrastructure` 三層。
 
-- `ControllerService`
-- `LogInService`
-- `SignUpService`
-- `RoleService`
-- `RolePermissionService`
-- `MailService`
-- `CommonFilesManagement`
-- `Service.Common`
-- `Service.Background`
-- `Services.Shared`
+| 服務資料夾 | Cmd | Query |
+|-----------|:---:|:-----:|
+| `ControllerService` | ✅ | ✅ |
+| `LogInService` | ✅ | — |
+| `SignUpService` | ✅ | ✅ |
+| `RoleService` | ✅ | ✅ |
+| `RolePermissionService` | ✅ | ✅ |
+| `MailService`（gRPC） | ✅ | — |
+| `Service.Common` | 跨服務共用基礎設施（JWT、Serilog、Middleware） |
+| `Service.Background` | Worker Service（RabbitMQ、DB 監控） |
+| `Services.Shared.FeatureFlag` | LaunchDarkly / OpenFeature 整合 |
+| `CommonFilesManagement` | 共用檔案存取管理 |
 
-> 每個服務可依需求拆分為 Command / Query 專案，並由 Gateway 統一路由轉發。
+## 主要技術棧
 
-## Docker Compose 概覽
+| 類別 | 套件 |
+|------|------|
+| Gateway | Ocelot 24、Ocelot.Cache.CacheManager |
+| ORM | Entity Framework Core 9、Dapper 2 |
+| 資料庫 | SQL Server（`Microsoft.Data.SqlClient`）、PostgreSQL（Npgsql 9） |
+| 訊息佇列 | RabbitMQ.Client 7 |
+| 快取 | StackExchange.Redis 2 |
+| 日誌 | Serilog（Elasticsearch、Seq sinks） |
+| gRPC | Grpc.AspNetCore 2.62 |
+| 認證 | JWT Bearer 9、Google OAuth（`Google.Apis.Auth`） |
+| Feature Flag | LaunchDarkly.ServerSdk 8、OpenFeature 2 |
+| 測試 | xUnit v3、Moq、Shouldly、coverlet |
+| 其他 | AutoMapper 13、AWS SDK（Core、IoT）、LinqKit |
 
-`WebApi/docker-compose.yml` 已預設多服務映像與環境變數配置，包含：
+## Docker Compose 服務對應
 
-- Gateway
-- Controller / Login / Signup / Role / RolePermission 之 CMD/Query 服務
-- Redis 連線字串（由環境變數注入）
-- LaunchDarkly SDK Key（僅 Query 服務）
+| Container | 映像 | Host Port |
+|-----------|------|-----------|
+| `systemapi_gateway` | `systemapi_gateway` | 80 / 443 |
+| `systemapi_controller_cmd` | `systemapi_controller_cmd` | 5126 |
+| `systemapi_controller_query` | `systemapi_controller_query` | 5044 |
+| `systemapi_login_cmd` | `systemapi_login_cmd` | 5246 |
+| `systemapi_signup_cmd` | `systemapi_signup_cmd` | 5215 |
+| `systemapi_signup_query` | `systemapi_signup_query` | 5289 |
+| `systemapi_rolepermission_cmd` | `systemapi_rolepermission_cmd` | 5114 |
+| `systemapi_rolepermission_query` | `systemapi_rolepermission_query` | 5256 |
+| `systemapi_role_cmd` | `systemapi_role_cmd` | 5121 |
+| `systemapi_role_query` | `systemapi_role_query` | 5128 |
 
-你可以依實際環境調整：
+> Redis 位於獨立 VM，透過 `redis.local:6379` 連線，不在此 Compose 管理範圍。
 
-- `HARBOR_REGISTRY` / `HARBOR_PROJECT`
-- 服務版本 Tag（如 `systemAPI_*_TAG`）
-- `ASPNETCORE_ENVIRONMENT`
+環境變數設定（`.env` 或 CI/CD 注入）：
+
+```env
+HARBOR_REGISTRY=<your-registry>
+HARBOR_PROJECT=<your-project>
+ASPNETCORE_ENVIRONMENT=Production
+systemAPI_GATEWAY_TAG=latest
+systemAPI_CONTROLLER_CMD_TAG=latest
+# ... 其他服務 Tag
+```
 
 ## 快速開始
 
-1. 還原相依套件
+1. **還原相依套件**
 
-	```bash
-	dotnet restore WebApi/SystemMain_WebApi.slnx
-	```
+   ```bash
+   dotnet restore WebApi/SystemMain_WebApi.slnx
+   ```
 
-2. 啟動 Gateway 或任一服務（示意）
+2. **本機啟動 Gateway**
 
-	```bash
-	dotnet run --project WebApi/GateWay/GateWay.csproj
-	```
+   ```bash
+   dotnet run --project WebApi/GateWay/GateWay.csproj
+   ```
 
-3. 使用 Docker Compose 啟動（需先準備映像）
+3. **本機啟動任一服務（示意）**
 
-	```bash
-	docker compose -f WebApi/docker-compose.yml up
-	```
+   ```bash
+   dotnet run --project WebApi/Services/ControllerService/ControllerService.Cmd.API/ControllerService.Cmd.API.csproj
+   ```
+
+4. **Docker Compose 啟動（需先備妥映像）**
+
+   ```bash
+   docker compose -f WebApi/docker-compose.yml up
+   ```
 
 ## 測試
 
-測試專案集中於 `WebApi/Tests`，並使用集中式 `Directory.Build.props` 管理。規範摘要：
+測試專案集中於 `WebApi/Tests/`，使用集中式 `Directory.Build.props` 管理共用設定。
 
-- 測試專案透過 `ProjectReference` 參考對應服務
-- 若需要 `Microsoft.AspNetCore.Mvc.Testing`，僅加在該測試專案
-- xUnit Runner 設定遵循覆蓋優先序
+**最小測試專案範本：**
 
-## 使用建議
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\Services\SomeService\SomeProject.csproj" />
+  </ItemGroup>
+</Project>
+```
 
-- 新增服務時優先參考 `Services/` 現有結構
-- 事件與指令型別應統一放置於 `CQRS.Core`
-- 新增路由時更新 `GateWay/ocelot.json`
+**重要規則：**
+- 整合測試若需要 `Microsoft.AspNetCore.Mvc.Testing`，僅加在該測試專案，不放入共用 `Directory.Build.props`
+- xUnit Runner 設定優先序：專案級 `<AssemblyName>.xunit.runner.json` > 專案根 `xunit.runner.json` > `Tests/xunit.runner.json`（共用預設）
+
+## 開發指南
+
+- 新增業務服務時，參考 `ControllerService` 的 Cmd/Query 三層結構
+- 事件與指令型別繼承自 `CQRS.Core` 的 `BaseEvent` / `BaseCommand`
+- 新路由需同步更新 `GateWay/ocelot.json`（開發環境使用 `ocelot.Dev.json`）
+- 共用授權、日誌邏輯統一放置於 `Service.Common`
+- Feature Flag 整合請使用 `Services.Shared.FeatureFlag`，避免直接耦合 LaunchDarkly SDK
 
 ## 版本與環境
 
-- .NET 版本：依各專案 `.csproj` 為準
-- Docker：支援多服務部署情境
+- **目標框架**：.NET 9.0（`Directory.Build.props` 統一設定）
+- **Nullable / ImplicitUsings**：全域啟用
+- **套件版本**：集中管理於 `Directory.Packages.props`
 
 ---
+
+## AI 開發工具（GitHub Copilot）
+
+本專案在 `.github/` 中內建了一套 GitHub Copilot 輔助開發配置，涵蓋 Agents、Prompts、Skills 與 Instructions。
+
+### Agents（`.github/agents/`）
+
+在 Chat 中以 `@` 呼叫，或透過對應 Prompt 自動觸發。
+
+| 檔案 | Agent 名稱 | 用途 |
+|------|-----------|------|
+| `db-explorer.agent.md` | **DB Explorer** | 唯讀查詢 PostgreSQL 資料庫（表結構、資料預覽），限制 SELECT |
+| `git-commit.agent.md` | **Git Commit** | 分析變更、產生 Conventional Commits 格式 message 並自動執行 commit |
+| `spec-writer.agent.md` | **Spec Writer** | 將功能簡述轉換為結構化 Feature Spec 文件（`docs/specs/`） |
+| `tdd-developer.agent.md` | **TDD Developer** | TDD 紅綠重構循環，專注於 EventHandler / QueryHandler 單元測試 |
+| `tech-lead.agent.md` | **Tech Lead** | Code Review：正確性、安全性（OWASP）、效能、SOLID 原則 |
+| `tech-researcher.agent.md` | **Tech Researcher** | 查詢官方文件、研究最新 .NET 技術與 AI Coding 趨勢 |
+
+### Prompts（`.github/prompts/`）
+
+在 Chat 中以 `/` 呼叫。
+
+| 檔案 | Prompt 名稱 | 對應 Agent | 用途 |
+|------|------------|-----------|------|
+| `generate-unit-tests.prompt.md` | **Generate Unit Tests** | TDD Developer | 為指定 Handler 或 Service 類別產生完整單元測試 |
+| `integration-test-flow.prompt.md` | **Integration Test Flow** | — | 產生跨服務整合測試流程圖與測試方案 |
+| `write-feature-spec.prompt.md` | **Write Feature Spec** | Spec Writer | 將功能簡述輸出為完整 Feature Spec 文件 |
+
+### Skills（`.github/skills/`）
+
+| 資料夾 | Skill 名稱 | 用途 |
+|--------|-----------|------|
+| `new-microservice/` | **new-microservice** | 依 CQRS 架構一次搭建完整微服務骨架（Cmd/Query 兩側三層 + 測試） |
+
+### Instructions（`.github/instructions/`）
+
+自動套用至符合 `applyTo` 規則的檔案，無需手動呼叫。
+
+| 檔案 | applyTo | 說明 |
+|------|---------|------|
+| `cqrs-microservices.instructions.md` | `Services/**/*.cs` | CQRS + Event Sourcing 架構模式規範 |
+| `csharp-style.instructions.md` | `**/*.cs` | C# 命名慣例與編碼風格規範 |
+| `testing.instructions.md` | `Tests/**/*.cs` | TDD 與 xUnit + Moq 測試規範 |
+
+### MCP Servers（`.vscode/mcp.json`）
+
+| Server | 說明 |
+|--------|------|
+| `postgres` | 連線 PostgreSQL，供 **DB Explorer** agent 查詢資料庫（連線字串在啟動時提示輸入） |
+| `fetch` | 抓取網頁內容，供 **Tech Researcher** agent 查詢官方文件與外部資源 |
 
 此專案為模板用途，建議依實際業務需求調整服務拆分、事件模型與資料庫策略。
