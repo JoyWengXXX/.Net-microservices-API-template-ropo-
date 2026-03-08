@@ -57,3 +57,14 @@ dotnet test Tests/Tests.slnx
 - **不會自動 push**，push 需另行確認
 
 > **重要**：當使用者請求 git commit（包含「git commit」、「幫我 commit」、「提交程式碼」等），無論是否透過 subagent，都**必須先讀取 `.github/agents/git-commit.agent.md`**，依照其中的規範（包含繁體中文 subject、Conventional Commits 格式、scope 命名等）產生 commit message，再執行。
+
+## 工作日報工作流程
+
+使用 **work-log-reporter** skill 將 git commit 自動轉換為 Google Sheet 工作日報：
+
+- Skill 檔案：`.github/skills/work-log/SKILL.md`
+- 觸發方式：說「記錄工作日報」、「寫到 Google Sheet」、「寫日報」或「commit 完後記日報」
+- MCP Server：`.mcp-servers/google-sheets/`（須先 `npm install` 並完成 Google 認證設定）
+- Skill 會自動讀取最新 commit、解析 Conventional Commits 格式，並逐筆寫入 Google Sheet
+
+> **首次使用**：請先閱讀 `.mcp-servers/google-sheets/README.md` 完成 Service Account 設定，再呼叫 `mcp_google_sheets_init_work_log_sheet` 初始化分頁。

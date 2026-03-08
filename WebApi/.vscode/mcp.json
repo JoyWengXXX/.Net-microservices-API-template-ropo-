@@ -5,6 +5,22 @@
       "description": "PostgreSQL connection string (e.g., postgresql://user:password@localhost:5432/dbname)",
       "type": "promptString",
       "password": true
+    },
+    {
+      "id": "google-sheets-credentials",
+      "description": "Google Service Account credentials JSON 檔案絕對路徑（例如 C:\\secrets\\worklog-sa.json）",
+      "type": "promptString"
+    },
+    {
+      "id": "google-spreadsheet-id",
+      "description": "Google Spreadsheet ID（URL 中 /spreadsheets/d/<ID>/ 的那段）",
+      "type": "promptString"
+    },
+    {
+      "id": "google-sheet-name",
+      "description": "工作日報分頁名稱（預設：WorkLog）",
+      "type": "promptString",
+      "default": "WorkLog"
     }
   ],
   "servers": {
@@ -21,6 +37,17 @@
       "args": [
         "mcp-server-fetch"
       ]
+    },
+    "google-sheets": {
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/.mcp-servers/google-sheets/index.js"
+      ],
+      "env": {
+        "GOOGLE_CREDENTIALS_FILE": "${input:google-sheets-credentials}",
+        "SPREADSHEET_ID": "${input:google-spreadsheet-id}",
+        "SHEET_NAME": "${input:google-sheet-name}"
+      }
     }
   }
 }

@@ -1,0 +1,14 @@
+{
+  "name": "mcp-google-sheets-worklog",
+  "version": "1.0.0",
+  "description": "MCP Server — 將 git commit 記錄寫入 Google Sheet 工作日報",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.10.1",
+    "googleapis": "^144.0.0"
+  }
+}

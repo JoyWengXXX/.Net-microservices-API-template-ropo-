@@ -1,0 +1,21 @@
+# Node.js
+node_modules/
+npm-debug.log*
+
+# .NET build output
+bin/
+obj/
+
+# User-specific VS Code settings
+.vscode/*.log
+
+# Google Service Account credentials（不應 commit）
+*service-account*.json
+*credentials*.json
+*-sa.json
+my-project-*.json
+
+# Environment files
+.env
+.env.local
+.env.*.local
