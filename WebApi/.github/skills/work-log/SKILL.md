@@ -113,39 +113,28 @@ body 說明（若有）
 
 使用者確認 commit message 後，依以下規則產生工作日誌。
 
-#### 2-1. 取得今天日期與星期
+#### 2-1. 取得今天日期
 
-- **date**：今天的 `YYYY-MM-DD`
-- **weekday**：對應中文星期
-
-| 英文 | 中文 |
-|------|------|
-| Monday | 週一 |
-| Tuesday | 週二 |
-| Wednesday | 週三 |
-| Thursday | 週四 |
-| Friday | 週五 |
-| Saturday | 週六 |
-| Sunday | 週日 |
+- **date**：今天的 `YYYY/M/D`（例如 `2026/3/9`）
 
 #### 2-2. 取得異動檔案數
 
-由 Phase 1 的 `git diff --cached --stat` 輸出中，取最後一行的檔案數字（例如 `5 files changed`）作為 `filesChanged`。
+由 Phase 1 的 `git diff --cached --stat` 輸出中，取最後一行的檔案數字（例如 `5 files changed`）作為參考資訊（**不寫入 Sheet**）。
 
 #### 2-3. Google Sheet 欄位對應規則
 
 > **重要**：MCP 工具的參數名稱與 Google Sheet 實際欄位意義不同，需依以下對應填入。
+> 欄位定義來自實際讀取 Google Sheet 資料，**不可自行假設**。
 
 | Google Sheet 欄 | MCP 參數 | 填入內容 | 說明 |
 |----------------|---------|---------|------|
-| A：日期 | `date` | `YYYY-MM-DD` | 今天日期 |
-| B：星期 | `weekday` | 週一 ～ 週日 | 中文星期 |
-| C：工作項目 | `commitHash` | 工作描述文字 | subject 的描述部分（去除 `type(scope):` 前綴），若無符合格式則填 subject 原文 |
-| D：工作說明 | `type` | 完整 commit 標題 | 格式：`type(scope): description`，無 type 則填 subject 原文 |
-| E：完成率 | `scope` | `100%` | 固定填 `100%` |
-| F：完成日 | `summary` | `YYYY/MM/DD` | 與日期相同，但使用 `/` 分隔符 |
-| G：異動檔案數 | `filesChanged` | 數字 | diff --cached --stat 取得的異動檔案數 |
-| H：Commit 完整訊息 | `fullMessage` | `subject\n\nbody` | commit message 完整內容（body 若為空則省略換行） |
+| A：日期 | `date` | `YYYY/M/D` | 今天日期，使用 `/` 分隔，月日不補零 |
+| B：工作項目 | `workItem` | 工作項目名稱 | subject 的描述部分（去除 `type(scope):` 前綴），若無符合格式則填 subject 原文 |
+| C：工作說明 | `workDescription` | 工作說明（可多行） | 完整 commit 標題或詳細說明，多筆用換行分隔 |
+| D：完成率 | `completionRate` | 完成率百分比 | 詢問使用者完成率，如 `100%`、`57%` |
+| E：完成日 | `completionDate` | `YYYY/M/D` | 詢問使用者，預設與日期相同 |
+| F：備注 | `remark` | 備注文字 | 選填，通常留空 |
+
 
 #### 2-4. 顯示工作日誌預覽並等待確認
 
@@ -154,9 +143,9 @@ body 說明（若有）
 ```
 ## 📋 工作日誌預覽
 
-| 日期       | 星期 | 工作項目（欄C）          | 工作說明（欄D）                            | 完成率 | 完成日     | 異動檔數 |
-|------------|------|-------------------------|--------------------------------------------|--------|------------|----------|
-| 2026-03-08 | 週六 | 新增 OAuth 登入功能      | feat(login-service): 新增 OAuth 登入功能   | 100%   | 2026/03/08 | 5        |
+| 日期      | 工作項目（欄B）        | 工作說明（欄C）                          | 完成率 | 完成日    |
+|-----------|----------------------|-----------------------------------------|--------|----------|
+| 2026/3/9  | 新增 OAuth 登入功能   | feat(login-service): 新增 OAuth 登入功能 | 100%   | 2026/3/9  |
 
 ---
 請確認工作日誌內容是否正確？確認後我會寫入 Google Sheet，然後執行 git commit。
@@ -188,14 +177,12 @@ pattern: "append_work_log|init_work_log|read_work_log"
 
 ```json
 {
-  "date": "2026-03-08",
-  "weekday": "週六",
-  "commitHash": "新增 OAuth 登入功能",
-  "type": "feat(login-service): 新增 OAuth 登入功能",
-  "scope": "100%",
-  "summary": "2026/03/08",
-  "filesChanged": 5,
-  "fullMessage": "feat(login-service): 新增 OAuth 登入功能\n\n支援 Google OAuth 2.0，包含用戶建立及 Token 刷新流程。"
+  "date": "2026/3/9",
+  "workItem": "新增 OAuth 登入功能",
+  "workDescription": "feat(login-service): 新增 OAuth 登入功能",
+  "completionRate": "100%",
+  "completionDate": "2026/3/9",
+  "remark": ""
 }
 ```
 
@@ -222,8 +209,8 @@ git commit -m "feat(scope): subject line" -m "Body content here."
 
 **Commit：** feat(login-service): 新增 OAuth 登入功能
 **Hash：** a1b2c3d
-**工作項目（欄C）：** 新增 OAuth 登入功能
-**完成日：** 2026/03/08
+**工作項目（workItem）：** 新增 OAuth 登入功能
+**完成日（completionDate）：** 2026/3/9
 ```
 
 > **注意：不執行 `git push`**，push 需另行由使用者確認。

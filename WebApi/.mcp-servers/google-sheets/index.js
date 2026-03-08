@@ -80,10 +80,10 @@ async function ensureSheetExists() {
   // 寫入標題列
   await sheetsApi.spreadsheets.values.update({
     spreadsheetId: SPREADSHEET_ID,
-    range: `${SHEET_NAME}!A1:H1`,
+    range: `${SHEET_NAME}!A1:F1`,
     valueInputOption: 'RAW', // 標題列也用 RAW，避免公式注入
     requestBody: {
-      values: [['日期', '星期', 'Commit Hash', 'Type', 'Scope', '工作摘要', '異動檔案數', 'Commit 完整訊息']],
+      values: [['日期', '工作項目', '工作說明', '完成率', '完成日', '備注']],
     },
   });
 
@@ -93,47 +93,39 @@ async function ensureSheetExists() {
 /**
  * 附加一筆工作日報記錄
  * @param {object} params
- * @param {string} params.date          - 日期 (YYYY-MM-DD)
- * @param {string} params.weekday       - 星期（中文，例如 週一）
- * @param {string} params.commitHash    - Short commit hash
- * @param {string} [params.type]        - Conventional Commits type
- * @param {string} [params.scope]       - Conventional Commits scope
- * @param {string} params.summary       - 工作摘要（commit subject 的描述部分）
- * @param {number} [params.filesChanged]- 異動檔案數
- * @param {string} [params.fullMessage] - commit 完整訊息
+ * @param {string} params.date             - 日期 (YYYY/M/D)
+ * @param {string} params.workItem         - 工作項目（B欄）
+ * @param {string} params.workDescription  - 工作說明，可多行（C欄）
+ * @param {string} [params.completionRate] - 完成率，例如 100%（D欄）
+ * @param {string} [params.completionDate] - 完成日 (YYYY/M/D)（E欄）
+ * @param {string} [params.remark]         - 備注（F欄，通常留空）
  */
 async function appendWorkLogRow(params) {
   const {
     date,
-    weekday   = '',
-    commitHash,
-    type      = '',
-    scope     = '',
-    summary,
-    filesChanged = 0,
-    fullMessage  = '',
+    workItem        = '',
+    workDescription = '',
+    completionRate  = '',
+    completionDate  = '',
+    remark          = '',
   } = params;
 
   const auth     = buildAuthClient();
   const sheetsApi = google.sheets({ version: 'v4', auth });
 
-  const row = [date, weekday, commitHash, type, scope, summary, filesChanged, fullMessage];
+  const row = [date, workItem, workDescription, completionRate, completionDate, remark];
 
   // 使用 RAW 而非 USER_ENTERED，防止儲存格公式注入（OWASP A03 Injection）
   await sheetsApi.spreadsheets.values.append({
     spreadsheetId: SPREADSHEET_ID,
-    range: `${SHEET_NAME}!A:H`,
+    range: `${SHEET_NAME}!A:F`,
     valueInputOption: 'RAW',
     requestBody: { values: [row] },
   });
 
-  const label = type
-    ? `${type}${scope ? `(${scope})` : ''}: ${summary}`
-    : summary;
-
   return {
     success: true,
-    message: `✅ 已新增：[${date} ${weekday}] ${commitHash} — ${label}`,
+    message: `✅ 已新增：[${date}] ${workItem} — ${workDescription}`,
   };
 }
 
@@ -152,7 +144,7 @@ async function readWorkLog({ limit = 10 } = {}) {
 
   const response = await sheetsApi.spreadsheets.values.get({
     spreadsheetId: SPREADSHEET_ID,
-    range: `${SHEET_NAME}!A:H`,
+    range: `${SHEET_NAME}!A:F`,
   });
 
   const rows     = response.data.values ?? [];
@@ -161,14 +153,12 @@ async function readWorkLog({ limit = 10 } = {}) {
   return {
     count: dataRows.length,
     entries: dataRows.map((r) => ({
-      date:         r[0] ?? '',
-      weekday:      r[1] ?? '',
-      commitHash:   r[2] ?? '',
-      type:         r[3] ?? '',
-      scope:        r[4] ?? '',
-      summary:      r[5] ?? '',
-      filesChanged: r[6] ?? '0',
-      fullMessage:  r[7] ?? '',
+      date:            r[0] ?? '',
+      workItem:        r[1] ?? '',
+      workDescription: r[2] ?? '',
+      completionRate:  r[3] ?? '',
+      completionDate:  r[4] ?? '',
+      remark:          r[5] ?? '',
     })),
   };
 }
@@ -188,16 +178,14 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
       inputSchema: {
         type: 'object',
         properties: {
-          date:         { type: 'string',  description: '日期（YYYY-MM-DD），例如 2026-03-08' },
-          weekday:      { type: 'string',  description: '星期（中文），例如 週六' },
-          commitHash:   { type: 'string',  description: 'Short commit hash，例如 a1b2c3d' },
-          type:         { type: 'string',  description: 'Conventional Commits type（feat/fix/refactor/...）' },
-          scope:        { type: 'string',  description: 'Conventional Commits scope' },
-          summary:      { type: 'string',  description: '工作摘要（commit subject 的描述部分）' },
-          filesChanged: { type: 'number',  description: '異動檔案數' },
-          fullMessage:  { type: 'string',  description: 'Commit 完整訊息（type(scope): subject\\n\\nbody）' },
+          date:            { type: 'string',  description: '日期（YYYY/M/D），例如 2026/3/9' },
+          workItem:        { type: 'string',  description: '工作項目（B欄），commit subject 去除 type(scope): 前綴後的描述' },
+          workDescription: { type: 'string',  description: '工作說明（C欄），完整 commit 標題或詳細說明，多筆用換行分隔' },
+          completionRate:  { type: 'string',  description: '完成率（D欄），例如 100%、57%' },
+          completionDate:  { type: 'string',  description: '完成日（E欄，YYYY/M/D），預設與日期相同' },
+          remark:          { type: 'string',  description: '備注（F欄），通常留空' },
         },
-        required: ['date', 'commitHash', 'summary'],
+        required: ['date', 'workItem', 'workDescription'],
       },
     },
     {
