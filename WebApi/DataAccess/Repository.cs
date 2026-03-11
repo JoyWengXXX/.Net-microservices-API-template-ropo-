@@ -260,7 +260,7 @@ namespace DataAccess
                 sql.Append("WHERE ");
             sql.Append(visitor.Sql);
 
-            // 睰 ORDER BY 
+            // Append ORDER BY clause.
             if (orderBy != null)
             {
                 var orderByVisitor = new OrderByExpressionVisitor();
@@ -328,7 +328,7 @@ namespace DataAccess
                 sql.Append("WHERE ");
             sql.Append(visitor.Sql);
 
-            // 睰 ORDER BY 
+            // Append ORDER BY clause.
             if (orderBy != null)
             {
                 var orderByVisitor = new OrderByExpressionVisitor();
@@ -473,7 +473,7 @@ namespace DataAccess
 
 
         /// <summary>
-        /// 舱SELECT逆粂猭
+        /// Builds SQL for SELECT clause.
         /// </summary>
         private class SelectExpressionVisitor : ExpressionVisitor
         {
@@ -497,7 +497,7 @@ namespace DataAccess
             }
         }
         /// <summary>
-        /// 舱UPDATE逆粂猭
+        /// Builds SQL for UPDATE clause.
         /// </summary>
         private class UpdateExpressionVisitor : ExpressionVisitor
         {
@@ -513,27 +513,27 @@ namespace DataAccess
                     if (node.Left is MemberExpression left)
                     {
                         var leftMemberName = left.Member.Name;
-                        var rightValue = Expression.Lambda(node.Right).Compile().DynamicInvoke(); //眔right.Right
+                        var rightValue = Expression.Lambda(node.Right).Compile().DynamicInvoke(); // Compile right expression to get parameter value.
                         var paramName = $"@{left.Member.Name}";
-                        _parameters.Add(paramName, rightValue); // 盢盽计 Dapper 把计睰
+                        _parameters.Add(paramName, rightValue); // Add constant value as a Dapper parameter.
 
                         Sql += $"\"{leftMemberName}\" = {paramName}";
                     }
                     else if (node.Left is ConstantExpression constant)
                     {
                         var leftMemberName = constant.Value.ToString();
-                        var rightValue = Expression.Lambda(node.Right).Compile().DynamicInvoke(); //眔right.Right
+                        var rightValue = Expression.Lambda(node.Right).Compile().DynamicInvoke(); // Compile right expression to get parameter value.
                         var paramName = $"@{constant.Value}";
-                        _parameters.Add(paramName, rightValue); // 盢盽计 Dapper 把计睰
+                        _parameters.Add(paramName, rightValue); // Add constant value as a Dapper parameter.
 
                         Sql += $"\"{leftMemberName}\" = {paramName}";
                     }
                     else if (node.Left is UnaryExpression unary)
                     {
                         var leftMemberName = ((MemberExpression)unary.Operand).Member.Name;
-                        var rightValue = Expression.Lambda(node.Right).Compile().DynamicInvoke(); //眔right.Right
+                        var rightValue = Expression.Lambda(node.Right).Compile().DynamicInvoke(); // Compile right expression to get parameter value.
                         var paramName = $"@{leftMemberName}";
-                        _parameters.Add(paramName, rightValue); // 盢盽计 Dapper 把计睰
+                        _parameters.Add(paramName, rightValue); // Add constant value as a Dapper parameter.
 
                         Sql += $"\"{leftMemberName}\" = {paramName}";
                     }
@@ -548,7 +548,7 @@ namespace DataAccess
             }
         }
         /// <summary>
-        /// 舱WHERE粂猭
+        /// Builds SQL for WHERE clause.
         /// </summary>
         private class WhereExpressionVisitor : ExpressionVisitor
         {
@@ -559,7 +559,7 @@ namespace DataAccess
             public DynamicParameters Parameters => _parameters;
 
             /// <summary>
-            /// 皐癸Expressionい单ぃ单㎝NOT Contains暗矪瞶
+            /// Handles unary expressions, including NOT Contains.
             /// </summary>
             /// <param name="node"></param>
             /// <returns></returns>
@@ -600,13 +600,13 @@ namespace DataAccess
                 Expression item;
                 if (node.Object != null)
                 {
-                    // 矪瞶 list.Contains(item) 薄猵
+                    // Handle list.Contains(item) case.
                     collection = node.Object;
                     item = node.Arguments[0];
                 }
                 else
                 {
-                    // 矪瞶 Enumerable.Contains(list, item) 薄猵
+                    // Handle Enumerable.Contains(list, item) case.
                     collection = node.Arguments[0];
                     item = node.Arguments[1];
                 }
@@ -634,7 +634,7 @@ namespace DataAccess
             }
 
             /// <summary>
-            /// 矪瞶ㄤExpression猵
+            /// Handles other expression cases.
             /// </summary>
             /// <param name="node"></param>
             /// <returns></returns>
@@ -729,7 +729,7 @@ namespace DataAccess
             }
         }
         /// <summary>
-        /// 舱ORDER BY粂猭
+        /// Builds SQL for ORDER BY clause.
         /// </summary>
         public class OrderByExpressionVisitor : ExpressionVisitor
         {
@@ -744,7 +744,7 @@ namespace DataAccess
                 {
                     var isDescending = node.Method.Name.EndsWith("Descending");
 
-                    // 矪瞶 lambda 笷Α
+                    // Handle lambda argument.
                     var lambdaExpression = node.Arguments[1];
                     if (lambdaExpression is UnaryExpression unaryExpression)
                     {
@@ -765,7 +765,7 @@ namespace DataAccess
                         }
                     }
 
-                    // 矪瞶碠甅よ猭秸ノ
+                    // Handle chained order-by methods.
                     if (node.Arguments[0] is MethodCallExpression innerMethod)
                     {
                         VisitMethodCall(innerMethod);

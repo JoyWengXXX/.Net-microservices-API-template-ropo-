@@ -52,11 +52,7 @@
     <Project Path="Services/RoleService/RoleService.Query.Infrastructure/UserRoleService.Query.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/Tests/">
-    <Project Path="Tests/ConfigurationHelper.Test/ConfigurationHelper.Test.csproj" />
     <Project Path="Tests/ControllerService.Test/ControllerService.Tests.csproj" />
-    <Project Path="Tests/LogInService.Test/LogInService.Tests.csproj" />
-    <Project Path="Tests/RoleService.Test/RoleService.Tests.csproj" />
-    <Project Path="Tests/SignUpService.Test/SignUpService.Tests.csproj" />
   </Folder>
   <Project Path="CommonLibrary/CommonLibrary.csproj" />
   <Project Path="CQRS.Core/CQRS.Core.csproj" />

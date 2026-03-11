@@ -1,11 +1,11 @@
-using System.Data;
+ï»¿using System.Data;
 using System.Linq.Expressions;
 using System.Transactions;
 
 namespace DataAccess.Interfaces
 {
     /// <summary>
-    /// Dapper«Ø¥ß³s½u
+    /// Dapperå»ºç«‹é€£ç·š
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     public interface IRepository<T1> where T1 : IProjectDBConnectionManager
@@ -13,7 +13,7 @@ namespace DataAccess.Interfaces
         public IDbConnection GetConnection();
 
         /// <summary>
-        /// ¨ú¦^¸ê®Æ²M³æ
+        /// å–å›è³‡æ–™æ¸…å–®
         /// </summary>
         /// <param name="selected"></param>
         /// <param name="predicate"></param>
@@ -22,7 +22,7 @@ namespace DataAccess.Interfaces
         public Task<IEnumerable<T2>?> GetListAsync<T2>(Expression<Func<T2, object>> selected, Expression<Func<T2, bool>>? predicate = null, Expression<Func<List<T2>, object>>? orderBy = null, IUnitOfWork unitOfWork = null) where T2 : class;
 
         /// <summary>
-        /// ¨ú¦^²Ä¤@µ§¸ê®Æ
+        /// å–å›ç¬¬ä¸€ç­†è³‡æ–™
         /// </summary>
         /// <param name="selected"></param>
         /// <param name="predicate"></param>
@@ -31,7 +31,7 @@ namespace DataAccess.Interfaces
         public Task<T2?> GetFirstAsync<T2>(Expression<Func<T2, object>> selected, Expression<Func<T2, bool>>? predicate = null, Expression<Func<List<T2>, object>>? orderBy = null, IUnitOfWork? unitOfWork = null) where T2 : class;
 
         /// <summary>
-        /// ·s¼W¸ê®Æ
+        /// æ–°å¢è³‡æ–™
         /// </summary>
         /// <param name="input"></param>
         /// <param name="unitOfWork"></param>
@@ -39,38 +39,38 @@ namespace DataAccess.Interfaces
         public Task<int> CreateAsync<T2>(T2 input, IUnitOfWork unitOfWork = null) where T2 : class;
 
         /// <summary>
-        /// §ó·s¸ê®Æ
+        /// æ›´æ–°è³‡æ–™
         /// </summary>
-        /// <param name="input">§ó·s¸ê®Æ</param>
-        /// <param name="predicate">WHERE±ø¥ó</param>
+        /// <param name="input">æ›´æ–°è³‡æ–™</param>
+        /// <param name="predicate">WHEREæ¢ä»¶</param>
         /// <param name="unitOfWork"></param>
         /// <returns></returns>
         public Task<int> UpdateAsync<T2>(Expression<Func<T2, bool>> input, Expression<Func<T2, bool>> predicate, IUnitOfWork unitOfWork = null) where T2 : class;
 
         /// <summary>
-        /// §R°£¸ê®Æ
+        /// åˆªé™¤è³‡æ–™
         /// </summary>
-        /// <param name="predicate">WHERE±ø¥ó</param>
+        /// <param name="predicate">WHEREæ¢ä»¶</param>
         /// <param name="unitOfWork"></param>
         /// <returns></returns>
         public Task<int> DeleteAsync<T2>(Expression<Func<T2, bool>> predicate, IUnitOfWork unitOfWork = null) where T2 : class;
 
         /// <summary>
-        /// ½ÆÂø¬d¸ß
+        /// è¤‡é›œæŸ¥è©¢
         /// </summary>
         /// <typeparam name="T2"></typeparam>
-        /// <param name="sqlStr">SQL¬d¸ß»yªk</param>
-        /// <param name="predicate">¿é¤J°Ñ¼Æ</param>
+        /// <param name="sqlStr">SQLæŸ¥è©¢èªæ³•</param>
+        /// <param name="predicate">è¼¸å…¥åƒæ•¸</param>
         /// <param name="unitOfWork"></param>
         /// <returns></returns>
         public Task<IEnumerable<T2>> ComplexQueryAsync<T2>(string sqlStr, object parameters = null, IUnitOfWork unitOfWork = null);
 
         /// <summary>
-        /// °õ¦æ½ÆÂø¾Ş§@
+        /// åŸ·è¡Œè¤‡é›œæ“ä½œ
         /// </summary>
         /// <typeparam name="T2"></typeparam>
-        /// <param name="predicate">SQL¾Ş§@»yªk</param>
-        /// <param name="predicate">¿é¤J°Ñ¼Æ</param>
+        /// <param name="predicate">SQLæ“ä½œèªæ³•</param>
+        /// <param name="predicate">è¼¸å…¥åƒæ•¸</param>
         /// <param name="unitOfWork"></param>
         /// <returns></returns>
         public Task<int> ComplexCommandAsync(string sqlStr, object parameters = null, IUnitOfWork unitOfWork = null);
@@ -78,4 +78,3 @@ namespace DataAccess.Interfaces
         IUnitOfWork CreateUnitOfWork();
     }
 }
-
