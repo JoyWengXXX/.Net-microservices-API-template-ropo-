@@ -1,7 +1,29 @@
 name: "功能需求"
-description: "新功能或功能修改需求"
+description: "新功能、功能修改或 Bug 回報"
 title: "[功能] "
 body:
+  - type: dropdown
+    id: issue_type
+    attributes:
+      label: "類型"
+      options:
+        - "新功能開發"
+        - "現有功能修改"
+        - "Bug 修復"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: "緊急程度"
+      options:
+        - "一般（正常排程）"
+        - "緊急（需優先處理）"
+        - "非常緊急（需立即處理）"
+    validations:
+      required: true
+
   - type: textarea
     id: description
     attributes:
