@@ -1,0 +1,68 @@
+name: "🔧 現有功能修改"
+description: "需要調整或修改目前已存在的功能"
+title: "[修改] "
+body:
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: "緊急程度"
+      options:
+        - "一般（正常排程）"
+        - "緊急（需優先處理）"
+        - "非常緊急（需立即處理）"
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: "目前的功能行為"
+      description: "說明目前這個功能是怎麼運作的"
+      placeholder: |
+        例：目前管線維修查詢只能依「案件編號」搜尋，無法依日期範圍篩選。
+    validations:
+      required: true
+
+  - type: textarea
+    id: desired
+    attributes:
+      label: "希望如何修改"
+      description: "說明修改後應該要有什麼行為"
+      placeholder: |
+        例：希望新增「施工日期區間」篩選條件，可選擇起訖日期後查詢。
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: "驗收條件"
+      description: "每行寫一條，說明完成後應該要能做到什麼"
+      placeholder: |
+        可輸入起訖日期進行篩選
+        日期格式為 YYYY/MM/DD
+        不輸入日期時顯示全部資料
+    validations:
+      required: true
+
+  - type: dropdown
+    id: db_change
+    attributes:
+      label: "是否需要異動資料庫"
+      description: "不確定的話選「不確定，由開發確認」"
+      options:
+        - "不需要"
+        - "需要（新增/修改資料表或欄位）"
+        - "需要（新增選單或設定資料）"
+        - "不確定，由開發確認"
+    validations:
+      required: true
+
+  - type: textarea
+    id: ref
+    attributes:
+      label: "備註 / 參考資料"
+      description: "舊系統畫面說明、截圖、相關文件連結等，沒有可留空"
+      placeholder: |
+        例：參考舊系統「污水管線維修作業 > 查詢」畫面
+        例：附件截圖（可直接貼圖）

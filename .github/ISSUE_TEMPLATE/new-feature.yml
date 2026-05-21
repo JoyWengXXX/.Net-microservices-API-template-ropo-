@@ -1,0 +1,59 @@
+name: "🆕 新功能開發"
+description: "需要新增一個目前系統沒有的功能"
+title: "[新功能] "
+body:
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: "緊急程度"
+      options:
+        - "一般（正常排程）"
+        - "緊急（需優先處理）"
+        - "非常緊急（需立即處理）"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "功能描述"
+      description: "說明這個功能要做什麼，盡量說明使用者的操作情境"
+      placeholder: |
+        例：使用者在管線維修查詢頁面，可以依照「施工日期區間」篩選案件，
+        並以列表顯示案件編號、地址、狀態。
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: "驗收條件"
+      description: "每行寫一條，說明完成後應該要能做到什麼"
+      placeholder: |
+        可依施工日期區間篩選
+        列表顯示案件編號、地址、狀態
+        無資料時顯示「查無資料」
+    validations:
+      required: true
+
+  - type: dropdown
+    id: db_change
+    attributes:
+      label: "是否需要異動資料庫"
+      description: "不確定的話選「不確定，由開發確認」"
+      options:
+        - "不需要"
+        - "需要（新增/修改資料表或欄位）"
+        - "需要（新增選單或設定資料）"
+        - "不確定，由開發確認"
+    validations:
+      required: true
+
+  - type: textarea
+    id: ref
+    attributes:
+      label: "備註 / 參考資料"
+      description: "舊系統畫面說明、截圖、相關文件連結等，沒有可留空"
+      placeholder: |
+        例：參考舊系統「污水管線維修作業 > 查詢」畫面
+        例：Analysis documents/污水下水道盤點表.xlsx > 項次 3-2
